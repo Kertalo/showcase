@@ -1,0 +1,68 @@
+[
+  {
+    "screenshots": [],
+    "grade": 61,
+    "id": 1,
+    "thumbnail": "/img/img1.png",
+    "goals": "Цели проекта 1",
+    "title": "Разработка увлекательной мобильной игры для платформы iOS с использованием AR-технологий.",
+    "track": 1,
+    "repo": "http://example.com",
+    "pptxUrl": "http://example.com"
+  },
+  {
+    "screenshots": [
+      "/img/img1.png",
+      "/img/img5.png"
+    ],
+    "grade": 72,
+    "id": 2,
+    "thumbnail": "/img/img2.png",
+    "title": "Веб-платформа для обучения программированию через создание собственных текстовых квестов и их визуализацию.",
+    "track": 1,
+    "repo": "http://example.com",
+    "pptxUrl": "http://example.com"
+  },
+  {
+    "screenshots": [
+      "/img/img1.png",
+      "/img/img7.png",
+      "/img/img3.png",
+      "/img/img5.png"
+    ],
+    "grade": 83,
+    "id": 3,
+    "thumbnail": "/img/img3.png",
+    "title": "Игровая экосистема с использованием компьютерного зрения: распознавание движений для управления персонажем в виртуальном мире.",
+    "track": 1,
+    "repo": "http://example.com",
+    "pptxUrl": "http://example.com"
+  },
+  {
+    "screenshots": [
+      "/img/img1.png",
+      "/img/img5.png",
+      "/img/img3.png"
+    ],
+    "grade": 94,
+    "id": 4,
+    "thumbnail": "/img/img4.png",
+    "title": "Мобильное приложение для обучения машинному обучению с интерактивными заданиями и игровым подходом к изучению алгоритмов.",
+    "track": 1,
+    "repo": "http://example.com",
+    "pptxUrl": "http://example.com"
+  },
+  {
+    "screenshots": [
+      "/img/img1.png",
+      "/img/img7.png"
+    ],
+    "grade": 69,
+    "id": 9,
+    "thumbnail": "/img/img5.png",
+    "title": "Интерактивная игра с элементами искусственного интеллекта: создание уникальных сценариев на основе действий игроков.",
+    "track": 2,
+    "repo": "http://example.com",
+    "pptxUrl": "http://example.com"
+  }
+]
