@@ -41,7 +41,7 @@ public class ShowcaseApplication {
 
 	@Bean
 	CommandLineRunner runner() {
-		return args -> {
+		return _ -> {
 			ObjectMapper mapper = new ObjectMapper();
 			TypeReference<List<Track>> trackTypeReference = new TypeReference<List<Track>>() {};
 			InputStream trackInputStream = TypeReference.class.getResourceAsStream("/json/tracks.json");
