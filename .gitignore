@@ -1,6 +1,7 @@
 HELP.md
+
+!/target/showcase-0.0.1-SNAPSHOT.jar
 /target/
-!/target/*.jar
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
