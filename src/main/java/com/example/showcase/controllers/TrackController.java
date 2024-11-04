@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @AllArgsConstructor
-@CrossOrigin
 @RestController
+@CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/tracks")
 public class TrackController {
     private TrackService trackService;

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @AllArgsConstructor
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/tags")
 public class TagController {
