@@ -4,6 +4,9 @@ HELP.md
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+/target/*
+!/target/showcase-1.0.0.jar
+
 ### STS ###
 .apt_generated
 .classpath
