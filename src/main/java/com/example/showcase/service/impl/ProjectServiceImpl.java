@@ -14,6 +14,7 @@ import com.example.showcase.service.ProjectService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -102,6 +103,44 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public Iterable<Project> save(List<Project> projects) {
+        return projectRepository.saveAll(projects);
+    }
+
+    @Override
+    public Iterable<Project> saveProjectsFromDTO(List<ProjectDTO> projectDTOs) {
+        List<Project> projects = new ArrayList<>();
+
+        for (ProjectDTO projectDTO : projectDTOs) {
+            Project project = new Project();
+
+            Track track = trackRepository.findById(projectDTO.getTrackId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Track not found"));
+            project.setTrack(track);
+
+            List<Tag> tags = tagRepository.findAllById(projectDTO.getTagsId());
+            if (tags.size() != projectDTO.getTagsId().size()) {
+                throw new ResourceNotFoundException("One or more tags not found");
+            }
+            project.setTags(tags);
+
+            List<User> users = userRepository.findAllById(projectDTO.getUsersId());
+            if (users.size() != projectDTO.getUsersId().size()) {
+                throw new ResourceNotFoundException("One or more users not found");
+            }
+            project.setUsers(users);
+
+            project.setId(projectDTO.getId());
+            project.setTitle(projectDTO.getTitle());
+            project.setDescription(projectDTO.getDescription());
+            project.setGrade(projectDTO.getGrade());
+            project.setRepo(projectDTO.getRepo());
+            project.setScreenshots(projectDTO.getScreenshots());
+            project.setPresentation(projectDTO.getPresentation());
+            project.setDate(projectDTO.getDate());
+
+            projects.add(project);
+        }
+
         return projectRepository.saveAll(projects);
     }
 

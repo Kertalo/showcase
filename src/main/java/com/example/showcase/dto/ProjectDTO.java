@@ -8,6 +8,7 @@ import java.util.List;
 @Getter
 @Setter
 public class ProjectDTO {
+    private Integer id;
     private Integer trackId;
     private String title;
     private String description;

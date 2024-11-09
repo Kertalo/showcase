@@ -17,4 +17,6 @@ public interface ProjectService {
     void deleteProject(int projectId);
 
     Iterable<Project> save(List<Project> projects);
+
+    Iterable<Project> saveProjectsFromDTO(List<ProjectDTO> projectDTOs);
 }

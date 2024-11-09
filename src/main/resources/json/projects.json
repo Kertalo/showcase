@@ -5,9 +5,11 @@
     "id": 1,
     "description": "Цели проекта 1",
     "title": "Разработка увлекательной мобильной игры для платформы iOS с использованием AR-технологий.",
-    "track": 1,
+    "trackId": 2,
     "repo": "http://example.com",
-    "presentation": "http://example.com"
+    "presentation": "http://example.com",
+    "usersId": [10],
+    "tagsId": [1,2]
   },
   {
     "screenshots": [
@@ -17,9 +19,11 @@
     "grade": 72,
     "id": 2,
     "title": "Веб-платформа для обучения программированию через создание собственных текстовых квестов и их визуализацию.",
-    "track": 1,
+    "trackId": 1,
     "repo": "http://example.com",
-    "presentation": "http://example.com"
+    "presentation": "http://example.com",
+    "tagsId": [1,2],
+    "usersId": [7,8,9]
   },
   {
     "screenshots": [
@@ -31,9 +35,11 @@
     "grade": 83,
     "id": 3,
     "title": "Игровая экосистема с использованием компьютерного зрения: распознавание движений для управления персонажем в виртуальном мире.",
-    "track": 1,
+    "trackId": 1,
     "repo": "http://example.com",
-    "presentation": "http://example.com"
+    "presentation": "http://example.com",
+    "usersId": [3,2,1,4],
+    "tagsId": [1,2]
   },
   {
     "screenshots": [
@@ -44,9 +50,11 @@
     "grade": 94,
     "id": 4,
     "title": "Мобильное приложение для обучения машинному обучению с интерактивными заданиями и игровым подходом к изучению алгоритмов.",
-    "track": 1,
+    "trackId": 1,
     "repo": "http://example.com",
-    "presentation": "http://example.com"
+    "presentation": "http://example.com",
+    "usersId": [5,2],
+    "tagsId": [1,2]
   },
   {
     "screenshots": [
@@ -54,10 +62,12 @@
       "/img/img7.png"
     ],
     "grade": 69,
-    "id": 9,
+    "id": 5,
     "title": "Интерактивная игра с элементами искусственного интеллекта: создание уникальных сценариев на основе действий игроков.",
-    "track": 2,
+    "trackId": 3,
     "repo": "http://example.com",
-    "presentation": "http://example.com"
+    "presentation": "http://example.com",
+    "usersId": [1,2,3],
+    "tagsId": [1,2,3]
   }
 ]
