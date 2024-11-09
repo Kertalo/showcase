@@ -1,5 +1,6 @@
 package com.example.showcase.controllers;
 
+import com.example.showcase.dto.ProjectDTO;
 import com.example.showcase.entity.Project;
 import com.example.showcase.service.ProjectService;
 import lombok.AllArgsConstructor;
@@ -17,7 +18,7 @@ public class ProjectController {
     private ProjectService projectService;
 
     @PostMapping
-    public ResponseEntity<Project> createProject(@RequestBody Project project) {
+    public ResponseEntity<Project> createProject(@RequestBody ProjectDTO project) {
         Project savedProject = projectService.createProject(project);
         return new ResponseEntity<>(savedProject, HttpStatus.CREATED);
     }
@@ -35,7 +36,7 @@ public class ProjectController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Project> updateProject(@PathVariable("id") int projectId, @RequestBody Project updateProject) {
+    public ResponseEntity<Project> updateProject(@PathVariable("id") int projectId, @RequestBody ProjectDTO updateProject) {
         Project project = projectService.updateProject(projectId, updateProject);
         return ResponseEntity.ok(project);
     }

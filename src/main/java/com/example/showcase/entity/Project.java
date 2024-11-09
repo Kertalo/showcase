@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,14 +19,15 @@ public class Project {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "track")
-    private Integer track;
+    @ManyToOne
+    @JoinColumn(name = "track_id", referencedColumnName = "id")
+    private Track track;
 
-    @Column(name = "goals")
-    private String goals;
+    @Column(name = "title")
+    private String title;
 
-    @Column(name = "results")
-    private String results;
+    @Column(name = "description")
+    private String description;
 
     @Column(name = "grade")
     private Integer grade;
@@ -32,15 +35,28 @@ public class Project {
     @Column(name = "repo")
     private String repo;
 
-    @Column(name = "title")
-    private String title;
-
     @Column(name = "screenshots")
     private String[] screenshots;
 
-    @Column(name = "thumbnail")
-    private String thumbnail;//thumbnail
+    @Column(name = "presentation")
+    private String presentation;
 
-    @Column(name = "pptxUrl")
-    private String pptxUrl;
+    @ManyToMany
+    @JoinTable(
+            name = "project_tags",
+            joinColumns = @JoinColumn(name = "project_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private List<Tag> tags;
+
+    @ManyToMany
+    @JoinTable(
+            name = "project_users",
+            joinColumns = @JoinColumn(name = "project_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private List<User> users;
+
+    @Column(name = "date")
+    private String date;
 }

@@ -1,9 +1,9 @@
 package com.example.showcase;
 
-import com.example.showcase.entity.Project;
 import com.example.showcase.entity.Tag;
 import com.example.showcase.entity.Track;
 import com.example.showcase.entity.User;
+import com.example.showcase.repository.ProjectRepository;
 import com.example.showcase.service.ProjectService;
 import com.example.showcase.service.TagService;
 import com.example.showcase.service.TrackService;
@@ -39,6 +39,8 @@ public class ShowcaseApplication {
 	@Autowired
 	private ProjectService projectService;
 
+	private ProjectRepository projectRepository;
+
 	@Bean
 	CommandLineRunner runner() {
 		return _ -> {
@@ -73,15 +75,15 @@ public class ShowcaseApplication {
 				System.out.println("Unable to save Users: " + e.getMessage());
 			}
 
-			TypeReference<List<Project>> projectTypeReference = new TypeReference<List<Project>>() {};
-			InputStream projectInputStream = TypeReference.class.getResourceAsStream("/json/projects.json");
-			try {
-				List<Project> projects = mapper.readValue(projectInputStream, projectTypeReference);
-				projectService.save(projects);
-				System.out.println("Projects Saved!");
-			} catch (IOException e) {
-				System.out.println("Unable to save Projects: " + e.getMessage());
-			}
+//			TypeReference<List<Project>> projectTypeReference = new TypeReference<List<Project>>() {};
+//			InputStream projectInputStream = TypeReference.class.getResourceAsStream("/json/projects.json");
+//			try {
+//				List<Project> projects = mapper.readValue(projectInputStream, projectTypeReference);
+//				projectService.save(projects);
+//				System.out.println("Projects Saved!");
+//			} catch (IOException e) {
+//				System.out.println("Unable to save Projects: " + e.getMessage());
+//			}
 		};
 	}
 }

@@ -1,8 +1,15 @@
 package com.example.showcase.service.impl;
 
+import com.example.showcase.dto.ProjectDTO;
+import com.example.showcase.entity.Tag;
+import com.example.showcase.entity.Track;
+import com.example.showcase.entity.User;
 import com.example.showcase.exception.ResourceNotFoundException;
 import com.example.showcase.entity.Project;
 import com.example.showcase.repository.ProjectRepository;
+import com.example.showcase.repository.TagRepository;
+import com.example.showcase.repository.TrackRepository;
+import com.example.showcase.repository.UserRepository;
 import com.example.showcase.service.ProjectService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,10 +19,32 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class ProjectServiceImpl implements ProjectService {
+    private TagRepository tagRepository;
+    private UserRepository userRepository;
     private ProjectRepository projectRepository;
+    private TrackRepository trackRepository;
 
     @Override
-    public Project createProject(Project project) {
+    public Project createProject(ProjectDTO projectDTO) {
+        Track track = trackRepository.findById(projectDTO.getTrackId())
+                .orElseThrow(() -> new ResourceNotFoundException("Track not found"));
+
+        List<Integer> tagIds = projectDTO.getTagsId();
+        List<Tag> tags = tagRepository.findAllById(tagIds);
+        if (tags.size() != tagIds.size()) {
+            throw new ResourceNotFoundException("One or more tags not found");
+        }
+
+        List<Integer> userIds = projectDTO.getUsersId();
+        List<User> users = userRepository.findAllById(userIds);
+        if (users.size() != userIds.size()) {
+            throw new ResourceNotFoundException("One or more users not found");
+        }
+
+        Project project = new Project();
+        project.setTrack(track);
+        project.setTags(tags);
+        project.setUsers(users);
         return projectRepository.save(project);
     }
 
@@ -32,18 +61,35 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Project updateProject(int projectId, Project updateProject) {
+    public Project updateProject(int projectId, ProjectDTO updateProjectDTO) {
         Project project = projectRepository.findById(projectId)
-            .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
-        project.setTrack(updateProject.getTrack());
-        project.setGoals(updateProject.getGoals());
-        project.setResults(updateProject.getResults());
-        project.setGrade(updateProject.getGrade());
-        project.setRepo(updateProject.getRepo());
-        project.setTitle(updateProject.getTitle());
-        project.setScreenshots(updateProject.getScreenshots());
-        project.setThumbnail(updateProject.getThumbnail());
-        project.setPptxUrl(updateProject.getPptxUrl());
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
+
+        Track track = trackRepository.findById(updateProjectDTO.getTrackId())
+                .orElseThrow(() -> new ResourceNotFoundException("Track not found"));
+        List<Integer> tagIds = updateProjectDTO.getTagsId();
+        List<Tag> tags = tagRepository.findAllById(tagIds);
+        if (tags.size() != tagIds.size()) {
+            throw new ResourceNotFoundException("One or more tags not found");
+        }
+
+        List<Integer> userIds = updateProjectDTO.getUsersId();
+        List<User> users = userRepository.findAllById(userIds);
+        if (users.size() != userIds.size()) {
+            throw new ResourceNotFoundException("One or more users not found");
+        }
+
+        project.setDescription(updateProjectDTO.getDescription());
+        project.setGrade(updateProjectDTO.getGrade());
+        project.setRepo(updateProjectDTO.getRepo());
+        project.setTitle(updateProjectDTO.getTitle());
+        project.setScreenshots(updateProjectDTO.getScreenshots());
+        project.setDate(updateProjectDTO.getDate());
+        project.setPresentation(updateProjectDTO.getPresentation());
+
+        project.setTrack(track);
+        project.setTags(tags);
+        project.setUsers(users);
         return projectRepository.save(project);
     }
 
