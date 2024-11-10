@@ -1,13 +1,12 @@
 package com.example.showcase;
 
 import com.example.showcase.dto.ProjectDTO;
+import com.example.showcase.dto.UserDTO;
+import com.example.showcase.entity.Role;
 import com.example.showcase.entity.Tag;
 import com.example.showcase.entity.Track;
 import com.example.showcase.entity.User;
-import com.example.showcase.service.ProjectService;
-import com.example.showcase.service.TagService;
-import com.example.showcase.service.TrackService;
-import com.example.showcase.service.UserService;
+import com.example.showcase.service.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +38,9 @@ public class ShowcaseApplication {
 	@Autowired
 	private ProjectService projectService;
 
+	@Autowired
+	private RoleService roleService;
+
 	@Bean
 	CommandLineRunner runner() {
 		return _ -> {
@@ -63,11 +65,21 @@ public class ShowcaseApplication {
 				System.out.println("Unable to save Tags: " + e.getMessage());
 			}
 
-			TypeReference<List<User>> userTypeReference = new TypeReference<List<User>>() {};
+			TypeReference<List<Role>> roleTypeReference = new TypeReference<List<Role>>() {};
+			InputStream roleInputStream = TypeReference.class.getResourceAsStream("/json/roles.json");
+			try {
+				List<Role> roles = mapper.readValue(roleInputStream, roleTypeReference);
+				roleService.save(roles);
+				System.out.println("Roles Saved!");
+			} catch (IOException e) {
+				System.out.println("Unable to save Roles: " + e.getMessage());
+			}
+
+			TypeReference<List<UserDTO>> userTypeReference = new TypeReference<List<UserDTO>>() {};
 			InputStream userInputStream = TypeReference.class.getResourceAsStream("/json/users.json");
 			try {
-				List<User> users = mapper.readValue(userInputStream, userTypeReference);
-				userService.save(users);
+				List<UserDTO> users = mapper.readValue(userInputStream, userTypeReference);
+				userService.saveUsersFromDTO(users);
 				System.out.println("Users Saved!");
 			} catch (IOException e) {
 				System.out.println("Unable to save Users: " + e.getMessage());

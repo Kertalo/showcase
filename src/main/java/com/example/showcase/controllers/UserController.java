@@ -1,5 +1,6 @@
 package com.example.showcase.controllers;
 
+import com.example.showcase.dto.UserDTO;
 import com.example.showcase.entity.User;
 import com.example.showcase.service.UserService;
 import lombok.AllArgsConstructor;
@@ -17,7 +18,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
+    public ResponseEntity<User> createUser(@RequestBody UserDTO user) {
         User savedUser = userService.createUser(user);
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
     }
@@ -35,8 +36,8 @@ public class UserController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<User> updateUser(@PathVariable("id") int userId, @RequestBody User updateuser) {
-        User user = userService.updateUser(userId, updateuser);
+    public ResponseEntity<User> updateUser(@PathVariable("id") int userId, @RequestBody UserDTO updateUser) {
+        User user = userService.updateUser(userId, updateUser);
         return ResponseEntity.ok(user);
     }
 
