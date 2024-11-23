@@ -10,8 +10,8 @@ spring:
             client:
                 registration:
                     github:
-                        clientId: ${CLIENT_ID}
-                        clientSecret: ${CLIENT_SECRET}
+                        client-id: ${CLIENT_ID}
+                        client-secret: ${CLIENT_SECRET}
 
     datasource:
         url: ${DB_URL}
@@ -21,3 +21,4 @@ spring:
     jpa:
         hibernate:
             ddl-auto: update
+        open-in-view: false

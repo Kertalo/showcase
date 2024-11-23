@@ -7,24 +7,50 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
-import org.springframework.security.config.Customizer;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
     @Bean
-    static SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeHttpRequests(authorize -> authorize
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.GET, "/", "/projects/**", "/tags/**", "/tracks/**", "/error", "/webjars/**").permitAll()
-                .anyRequest().authenticated()
-            )
-            .oauth2Login(Customizer.withDefaults())
-            .logout(l -> l.logoutSuccessUrl("/").permitAll())
-            .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
+                .anyRequest().authenticated())
+            .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+            .logout(l -> l
+				.logoutSuccessUrl("/").permitAll()
+			)
+            .oauth2Login(auth -> auth.successHandler(authenticationSuccessHandler()));
             
         return http.build();
+    }
+
+    @Bean
+    AuthenticationSuccessHandler authenticationSuccessHandler() {
+        // Указываем адрес фронтенда, куда перенаправить пользователя после входа
+        SimpleUrlAuthenticationSuccessHandler handler = new SimpleUrlAuthenticationSuccessHandler();
+        handler.setDefaultTargetUrl("http://localhost:5173");
+        return handler;
+    }
+
+    @Bean
+    CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true); // Разрешаем передавать credentials
+        config.addAllowedOrigin("http://localhost:5173"); // Указываем адрес фронтенда
+        config.addAllowedHeader("*"); // Разрешаем любые заголовки
+        config.addAllowedMethod("*"); // Разрешаем любые методы (GET, POST, PUT и т.д.)
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
     }
 }
