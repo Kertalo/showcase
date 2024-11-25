@@ -4,7 +4,9 @@ import com.example.showcase.dto.ProjectDTO;
 import com.example.showcase.dto.UserDTO;
 import com.example.showcase.entity.Project;
 import com.example.showcase.entity.User;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface UserService {
@@ -21,4 +23,6 @@ public interface UserService {
     Iterable<User> save(List<User> users);
 
     Iterable<User> saveUsersFromDTO(List<UserDTO> userDTOs);
+
+    byte[] downloadImageFromFileSystem(Integer userId) throws IOException;
 }

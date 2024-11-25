@@ -9,9 +9,14 @@ import com.example.showcase.repository.UserRepository;
 import com.example.showcase.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -19,14 +24,38 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
 
+    private static final String FOLDER_PATH = "C:\\JAVA\\PROJECTS\\showcase\\user_images\\";
+
     @Override
     public User createUser(UserDTO userDTO) {
         Role role = roleRepository.findById(userDTO.getRoleId())
                 .orElseThrow(() -> new ResourceNotFoundException("Role not found"));
 
+        String imagePath = saveImage(userDTO.getImage(), userDTO.getFullName());
+
         User user = new User();
+        user.setFullName(userDTO.getFullName());
+        user.setLogin(userDTO.getLogin());
         user.setRole(role);
+        user.setImagePath(imagePath);
+
         return userRepository.save(user);
+    }
+
+    private String saveImage(MultipartFile image, String name) {
+        File directory = new File(FOLDER_PATH);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        String filePath = FOLDER_PATH + name + ".png";
+        try {
+            image.transferTo(new File(filePath));
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to save image: " + e.getMessage());
+        }
+
+        return filePath;
     }
 
     @Override
@@ -50,6 +79,12 @@ public class UserServiceImpl implements UserService {
         user.setFullName(updateUserDTO.getFullName());
         user.setLogin(updateUserDTO.getLogin());
         user.setRole(role);
+
+        if (updateUserDTO.getImage() != null && !updateUserDTO.getImage().isEmpty()) {
+            String imagePath = saveImage(updateUserDTO.getImage(), user.getFullName());
+            user.setImagePath(imagePath);
+        }
+
         return userRepository.save(user);
     }
 
@@ -57,6 +92,14 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(int userId) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        if (user.getImagePath() != null && !user.getImagePath().isEmpty()) {
+            File file = new File(user.getImagePath());
+            if (file.exists() && file.isFile()) {
+                if (!file.delete()) {
+                    throw new RuntimeException("Failed to delete file");
+                }
+            }
+        }
         userRepository.delete(user);
     }
 
@@ -80,9 +123,23 @@ public class UserServiceImpl implements UserService {
             user.setLogin(userDTO.getLogin());
             user.setId(userDTO.getId());
 
+            if (userDTO.getImage() != null && !userDTO.getImage().isEmpty()) {
+                String imagePath = saveImage(userDTO.getImage(), user.getFullName());
+                user.setImagePath(imagePath);
+            }
+
             users.add(user);
         }
         return userRepository.saveAll(users);
+    }
+
+
+    @Override
+    public byte[] downloadImageFromFileSystem(Integer userId) throws IOException {
+        Optional<User> user = userRepository.findById(userId);
+        String filePath = user.get().getImagePath();
+        byte[] images = Files.readAllBytes(new File(filePath).toPath());
+        return images;
     }
 
 }

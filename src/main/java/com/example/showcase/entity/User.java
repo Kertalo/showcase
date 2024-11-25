@@ -26,4 +26,7 @@ public class User {
 
     @Column(name = "login")
     private String login;
+
+    @Column(name = "image")
+    private String imagePath;
 }
