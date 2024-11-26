@@ -1,0 +1,25 @@
+spring:
+    application:
+        name: showcase
+
+    config:
+        import: optional:file:env.properties
+
+    security:
+        oauth2:
+            client:
+                registration:
+                    github:
+                        scope: read:user,user:email
+                        client-id: ${CLIENT_ID}
+                        client-secret: ${CLIENT_SECRET}
+
+    datasource:
+        url: ${DB_URL}
+        username: ${DB_USER}
+        password: ${DB_PASSWORD}
+
+    jpa:
+        hibernate:
+            ddl-auto: update
+        open-in-view: false

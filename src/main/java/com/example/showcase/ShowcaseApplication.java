@@ -5,7 +5,6 @@ import com.example.showcase.dto.UserDTO;
 import com.example.showcase.entity.Role;
 import com.example.showcase.entity.Tag;
 import com.example.showcase.entity.Track;
-import com.example.showcase.entity.User;
 import com.example.showcase.service.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

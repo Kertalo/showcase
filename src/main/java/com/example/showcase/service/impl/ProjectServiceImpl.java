@@ -28,7 +28,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public Project createProject(ProjectDTO projectDTO) {
         Track track = trackRepository.findById(projectDTO.getTrackId())
-                .orElseThrow(() -> new ResourceNotFoundException("Track not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Track not found"));
 
         List<Integer> tagIds = projectDTO.getTagsId();
         List<Tag> tags = tagRepository.findAllById(tagIds);
