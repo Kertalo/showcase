@@ -6,6 +6,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
@@ -13,6 +14,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+
 
 @Configuration
 @EnableWebSecurity
@@ -29,9 +31,18 @@ public class SecurityConfig {
             .logout(l -> l
 				.logoutSuccessUrl("/").permitAll()
 			)
-            .oauth2Login(auth -> auth.successHandler(authenticationSuccessHandler()));
+            .oauth2Login(auth -> auth
+                .userInfoEndpoint(userInfo -> userInfo
+                    .oidcUserService(oidcUserService()))
+                .successHandler(authenticationSuccessHandler())
+            );
             
         return http.build();
+    }
+
+    @Bean
+    OidcUserService oidcUserService() {
+        return new OidcUserService();
     }
 
     @Bean
