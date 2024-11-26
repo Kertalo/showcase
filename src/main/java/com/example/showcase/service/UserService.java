@@ -2,7 +2,6 @@ package com.example.showcase.service;
 
 import com.example.showcase.dto.UserDTO;
 import com.example.showcase.entity.User;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
