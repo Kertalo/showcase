@@ -47,7 +47,6 @@ public class SecurityConfig {
 
     @Bean
     AuthenticationSuccessHandler authenticationSuccessHandler() {
-        // Указываем адрес фронтенда, куда перенаправить пользователя после входа
         SimpleUrlAuthenticationSuccessHandler handler = new SimpleUrlAuthenticationSuccessHandler();
         handler.setDefaultTargetUrl("http://localhost:5173");
         return handler;
@@ -57,10 +56,10 @@ public class SecurityConfig {
     CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true); // Разрешаем передавать credentials
-        config.addAllowedOrigin("http://localhost:5173"); // Указываем адрес фронтенда
-        config.addAllowedHeader("*"); // Разрешаем любые заголовки
-        config.addAllowedMethod("*"); // Разрешаем любые методы (GET, POST, PUT и т.д.)
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin("http://localhost:5173");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }
