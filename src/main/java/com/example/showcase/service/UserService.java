@@ -22,4 +22,6 @@ public interface UserService {
     Iterable<User> saveUsersFromDTO(List<UserDTO> userDTOs);
 
     byte[] downloadImageFromFileSystem(Integer userId) throws IOException;
+
+    User getUserByLogin(String email);
 }

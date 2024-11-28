@@ -56,4 +56,10 @@ public class UserController {
                 .contentType(MediaType.valueOf("image/png"))
                 .body(imageData);
     }
+
+    @GetMapping("/login/{login}")
+    public ResponseEntity<User> getUserByLogin(@PathVariable("login") String login) {
+        User user = userService.getUserByLogin(login);
+        return ResponseEntity.ok(user);
+    }
 }

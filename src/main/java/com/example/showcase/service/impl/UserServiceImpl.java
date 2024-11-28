@@ -141,5 +141,9 @@ public class UserServiceImpl implements UserService {
         byte[] images = Files.readAllBytes(new File(filePath).toPath());
         return images;
     }
+    @Override
+    public User getUserByLogin(String login) {
+        return userRepository.findByLogin(login);
+    }
 
 }
