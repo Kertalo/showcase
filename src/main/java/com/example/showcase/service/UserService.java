@@ -24,4 +24,6 @@ public interface UserService {
     byte[] downloadImageFromFileSystem(Integer userId) throws IOException;
 
     User getUserByLogin(String email);
+
+    User getUserByEmail(String email);
 }

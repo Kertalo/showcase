@@ -62,4 +62,10 @@ public class UserController {
         User user = userService.getUserByLogin(login);
         return ResponseEntity.ok(user);
     }
+
+    @GetMapping("/email/{email}")
+    public ResponseEntity<User> getUserByEmail(@PathVariable("email") String email) {
+        User user = userService.getUserByEmail(email);
+        return ResponseEntity.ok(user);
+    }
 }

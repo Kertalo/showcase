@@ -38,6 +38,7 @@ public class UserServiceImpl implements UserService {
         user.setLogin(userDTO.getLogin());
         user.setRole(role);
         user.setImagePath(imagePath);
+        user.setEmail(userDTO.getEmail());
 
         return userRepository.save(user);
     }
@@ -79,6 +80,7 @@ public class UserServiceImpl implements UserService {
         user.setFullName(updateUserDTO.getFullName());
         user.setLogin(updateUserDTO.getLogin());
         user.setRole(role);
+        user.setEmail(updateUserDTO.getEmail());
 
         if (updateUserDTO.getImage() != null && !updateUserDTO.getImage().isEmpty()) {
             String imagePath = saveImage(updateUserDTO.getImage(), user.getFullName());
@@ -122,6 +124,7 @@ public class UserServiceImpl implements UserService {
             user.setFullName(userDTO.getFullName());
             user.setLogin(userDTO.getLogin());
             user.setId(userDTO.getId());
+            user.setEmail(userDTO.getEmail());
 
             if (userDTO.getImage() != null && !userDTO.getImage().isEmpty()) {
                 String imagePath = saveImage(userDTO.getImage(), user.getFullName());
@@ -141,9 +144,15 @@ public class UserServiceImpl implements UserService {
         byte[] images = Files.readAllBytes(new File(filePath).toPath());
         return images;
     }
+
     @Override
     public User getUserByLogin(String login) {
         return userRepository.findByLogin(login);
+    }
+
+    @Override
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
 }
