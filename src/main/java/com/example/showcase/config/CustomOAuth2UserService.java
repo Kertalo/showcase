@@ -26,13 +26,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         OAuth2User oAuth2User = super.loadUser(userRequest);
         String email = (String) oAuth2User.getAttributes().get("email");
 
-        User user = new User();
-        user.setFullName(email);
-        
-        Role role = roleService.getRoleById(1);
-        user.setRole(role);
+        if (!userRepository.existsByFullName(email)) {
+            User user = new User();
+            user.setFullName(email);
+            Role role = roleService.getRoleById(1);
+            user.setRole(role);
+            userRepository.save(user);
+        } else {
+            System.out.println("This email " + email + " already has");
+        }
 
-        userRepository.save(user);
         return oAuth2User;
     }
 }
