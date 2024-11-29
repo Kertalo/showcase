@@ -26,9 +26,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         OAuth2User oAuth2User = super.loadUser(userRequest);
         String email = (String) oAuth2User.getAttributes().get("email");
 
-        if (!userRepository.existsByFullName(email)) {
+        if (email == null) {
+            throw new IllegalArgumentException("Email is null. User cannot be registered.");
+        }
+
+        if (!userRepository.existsByEmail(email)) {
             User user = new User();
-            user.setFullName(email);
+            user.setEmail(email);
             Role role = roleService.getRoleById(1);
             user.setRole(role);
             userRepository.save(user);

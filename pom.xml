@@ -106,7 +106,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <compilerVersion>23</compilerVersion>
                     <source>23</source>
                     <target>23</target>
                     <annotationProcessors>
