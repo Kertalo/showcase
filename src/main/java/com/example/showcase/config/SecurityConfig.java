@@ -48,7 +48,7 @@ public class SecurityConfig {
     @Bean
     AuthenticationSuccessHandler authenticationSuccessHandler() {
         SimpleUrlAuthenticationSuccessHandler handler = new SimpleUrlAuthenticationSuccessHandler();
-        handler.setDefaultTargetUrl("https://sfedu-project-showcase-seven.vercel.app/");
+        handler.setDefaultTargetUrl("http://localhost:5173/");
         return handler;
     }
 
