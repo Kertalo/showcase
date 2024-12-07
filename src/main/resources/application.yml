@@ -22,3 +22,7 @@ spring:
     jpa:
         hibernate:
             ddl-auto: update
+
+front:
+    local: ${FRONTEND_LOCAL}
+    global: ${FRONTEND_GLOBAL}

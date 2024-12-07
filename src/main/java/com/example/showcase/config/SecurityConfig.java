@@ -17,10 +17,18 @@ import org.springframework.web.filter.CorsFilter;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
+import org.springframework.beans.factory.annotation.Value;
+
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+    
+    @Value("${front.local}")
+    String frontendLocal;
+
+    @Value("${front.global}")
+    String frontendGlobal;
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -32,7 +40,7 @@ public class SecurityConfig {
                 .anyRequest().authenticated())
             .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
             .logout(l -> l
-				.logoutSuccessUrl("/").permitAll()
+				.logoutSuccessUrl("production".equalsIgnoreCase(System.getenv("ENVIRONMENT")) ? frontendGlobal : frontendLocal).permitAll()
 			)
             .oauth2Login(auth -> auth
                 .userInfoEndpoint(userInfo -> userInfo
@@ -52,13 +60,7 @@ public class SecurityConfig {
     AuthenticationSuccessHandler authenticationSuccessHandler() {
         SimpleUrlAuthenticationSuccessHandler handler = new SimpleUrlAuthenticationSuccessHandler();
 
-        String environment = System.getenv("ENVIRONMENT");
-        if ("production".equalsIgnoreCase(environment)) {
-            handler.setDefaultTargetUrl("https://sfedu-project-showcase.onrender.com/");
-        } else {
-            handler.setDefaultTargetUrl("http://localhost:5173/");
-        }
-
+        handler.setDefaultTargetUrl("production".equalsIgnoreCase(System.getenv("ENVIRONMENT")) ? frontendGlobal : frontendLocal);
         return handler;
     }
 
@@ -67,8 +69,8 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("https://sfedu-project-showcase.onrender.com");
-        config.addAllowedOrigin("http://localhost:5173");
+        config.addAllowedOrigin(frontendGlobal);
+        config.addAllowedOrigin(frontendLocal);
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
