@@ -4,7 +4,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
@@ -52,7 +51,14 @@ public class SecurityConfig {
     @Bean
     AuthenticationSuccessHandler authenticationSuccessHandler() {
         SimpleUrlAuthenticationSuccessHandler handler = new SimpleUrlAuthenticationSuccessHandler();
-        handler.setDefaultTargetUrl("http://localhost:5173/");
+
+        String environment = System.getenv("ENVIRONMENT");
+        if ("production".equalsIgnoreCase(environment)) {
+            handler.setDefaultTargetUrl("https://sfedu-project-showcase.onrender.com/");
+        } else {
+            handler.setDefaultTargetUrl("http://localhost:5173/");
+        }
+
         return handler;
     }
 
