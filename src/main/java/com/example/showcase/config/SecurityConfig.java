@@ -36,7 +36,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
                 .cors(withDefaults())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.GET, "/","/api/**", "/projects/**", "/tags/**", "/tracks/**", "/error", "/webjars/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/", "/projects/**", "/tags/**", "/tracks/**", "/error", "/webjars/**").permitAll()
                 .anyRequest().authenticated())
             .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
             .logout(l -> l
