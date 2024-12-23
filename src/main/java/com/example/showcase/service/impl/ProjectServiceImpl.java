@@ -113,6 +113,20 @@ public class ProjectServiceImpl implements ProjectService {
         return imagePaths;
     }
 
+    private void deleteFolder(File folder) {
+        File[] files = folder.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    deleteFolder(file);
+                } else {
+                    file.delete();
+                }
+            }
+        }
+        folder.delete();
+    }
+
     @Override
     public Project getProjectById(int projectId) {
         Project project = projectRepository.findById(projectId)
@@ -171,15 +185,22 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public void deleteProject(int projectId) {
         Project project = projectRepository.findById(projectId)
-            .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
+
         if (project.getMainScreenshot() != null && !project.getMainScreenshot().isEmpty()) {
             File file = new File(project.getMainScreenshot());
             if (file.exists() && file.isFile()) {
                 if (!file.delete()) {
-                    throw new RuntimeException("Failed to delete file");
+                    throw new RuntimeException("Failed to delete main screenshot file");
                 }
             }
         }
+
+        File screenshotsFolder = new File(FOLDER_PATH_SCREENSHOTS + project.getTitle());
+        if (screenshotsFolder.exists()) {
+            deleteFolder(screenshotsFolder);
+        }
+
         projectRepository.delete(project);
     }
 
