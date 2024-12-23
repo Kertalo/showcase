@@ -3,6 +3,7 @@ package com.example.showcase.service;
 import com.example.showcase.dto.ProjectDTO;
 import com.example.showcase.entity.Project;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface ProjectService {
@@ -19,4 +20,6 @@ public interface ProjectService {
     Iterable<Project> save(List<Project> projects);
 
     Iterable<Project> saveProjectsFromDTO(List<ProjectDTO> projectDTOs);
+
+    byte[] downloadMainImageFromFileSystem(Integer projectId) throws IOException;
 }

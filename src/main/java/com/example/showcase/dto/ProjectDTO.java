@@ -2,6 +2,7 @@ package com.example.showcase.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -19,4 +20,5 @@ public class ProjectDTO {
     private List<Integer> tagsId;
     private List<Integer> usersId;
     private String date;
+    private MultipartFile mainScreenshot;
 }

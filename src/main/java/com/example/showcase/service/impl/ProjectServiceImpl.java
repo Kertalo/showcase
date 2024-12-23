@@ -13,9 +13,14 @@ import com.example.showcase.repository.UserRepository;
 import com.example.showcase.service.ProjectService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -24,6 +29,8 @@ public class ProjectServiceImpl implements ProjectService {
     private UserRepository userRepository;
     private ProjectRepository projectRepository;
     private TrackRepository trackRepository;
+
+    private static final String FOLDER_PATH = "C:\\JAVA\\PROJECTS\\showcase\\project_images\\main_screenshots\\";
 
     @Override
     public Project createProject(ProjectDTO projectDTO) {
@@ -42,11 +49,39 @@ public class ProjectServiceImpl implements ProjectService {
             throw new ResourceNotFoundException("One or more users not found");
         }
 
+        String imagePath = saveImage(projectDTO.getMainScreenshot(), projectDTO.getTitle());
+
         Project project = new Project();
+
         project.setTrack(track);
         project.setTags(tags);
         project.setUsers(users);
+        project.setDescription(projectDTO.getDescription());
+        project.setTitle(projectDTO.getTitle());
+        project.setRepo(projectDTO.getRepo());
+        project.setGrade(projectDTO.getGrade());
+        project.setDate(projectDTO.getDate());
+        project.setScreenshots(projectDTO.getScreenshots());
+        project.setMainScreenshot(imagePath);
+        project.setPresentation(projectDTO.getPresentation());
+
         return projectRepository.save(project);
+    }
+
+    private String saveImage(MultipartFile image, String title) {
+        File directory = new File(FOLDER_PATH);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        String filePath = FOLDER_PATH + title + ".png";
+        try {
+            image.transferTo(new File(filePath));
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to save image: " + e.getMessage());
+        }
+
+        return filePath;
     }
 
     @Override
@@ -91,6 +126,11 @@ public class ProjectServiceImpl implements ProjectService {
         project.setTrack(track);
         project.setTags(tags);
         project.setUsers(users);
+
+        if (updateProjectDTO.getMainScreenshot() != null && !updateProjectDTO.getMainScreenshot().isEmpty()) {
+            String mainImagePath = saveImage(updateProjectDTO.getMainScreenshot(), project.getTitle());
+            project.setMainScreenshot(mainImagePath);
+        }
         return projectRepository.save(project);
     }
 
@@ -98,6 +138,14 @@ public class ProjectServiceImpl implements ProjectService {
     public void deleteProject(int projectId) {
         Project project = projectRepository.findById(projectId)
             .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
+        if (project.getMainScreenshot() != null && !project.getMainScreenshot().isEmpty()) {
+            File file = new File(project.getMainScreenshot());
+            if (file.exists() && file.isFile()) {
+                if (!file.delete()) {
+                    throw new RuntimeException("Failed to delete file");
+                }
+            }
+        }
         projectRepository.delete(project);
     }
 
@@ -142,6 +190,14 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         return projectRepository.saveAll(projects);
+    }
+
+    @Override
+    public byte[] downloadMainImageFromFileSystem(Integer projectId) throws IOException {
+        Optional<Project> project = projectRepository.findById(projectId);
+        String filePath = project.get().getMainScreenshot();
+        byte[] images = Files.readAllBytes(new File(filePath).toPath());
+        return images;
     }
 
 }

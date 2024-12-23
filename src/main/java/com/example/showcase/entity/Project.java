@@ -59,4 +59,7 @@ public class Project {
 
     @Column(name = "date")
     private String date;
+
+    @Column(name = "image")
+    private String mainScreenshot;
 }
