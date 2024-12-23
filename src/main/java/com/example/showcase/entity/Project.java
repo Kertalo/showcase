@@ -36,7 +36,7 @@ public class Project {
     private String repo;
 
     @Column(name = "screenshots")
-    private String[] screenshots;
+    private List<String> screenshots;
 
     @Column(name = "presentation")
     private String presentation;

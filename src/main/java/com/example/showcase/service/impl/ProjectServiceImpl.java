@@ -31,6 +31,7 @@ public class ProjectServiceImpl implements ProjectService {
     private TrackRepository trackRepository;
 
     private static final String FOLDER_PATH = "C:\\JAVA\\PROJECTS\\showcase\\project_images\\main_screenshots\\";
+    private static final String FOLDER_PATH_SCREENSHOTS = "C:\\JAVA\\PROJECTS\\showcase\\project_images\\screenshots\\";
 
     @Override
     public Project createProject(ProjectDTO projectDTO) {
@@ -50,6 +51,8 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         String imagePath = saveImage(projectDTO.getMainScreenshot(), projectDTO.getTitle());
+        List<String> screenshotsPaths = saveImages(projectDTO.getScreenshots(), projectDTO.getTitle());
+
 
         Project project = new Project();
 
@@ -61,8 +64,10 @@ public class ProjectServiceImpl implements ProjectService {
         project.setRepo(projectDTO.getRepo());
         project.setGrade(projectDTO.getGrade());
         project.setDate(projectDTO.getDate());
-        project.setScreenshots(projectDTO.getScreenshots());
+
         project.setMainScreenshot(imagePath);
+        project.setScreenshots(screenshotsPaths);
+
         project.setPresentation(projectDTO.getPresentation());
 
         return projectRepository.save(project);
@@ -82,6 +87,30 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         return filePath;
+    }
+
+    private List<String> saveImages(MultipartFile[] images, String title) {
+        List<String> imagePaths = new ArrayList<>();
+        File directory = new File(FOLDER_PATH_SCREENSHOTS + title);
+
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        for (int i = 0; i < images.length; i++) {
+            MultipartFile image = images[i];
+            String fileName = title + "_screenshot_" + i+1 + ".png";
+            String filePath = directory.getAbsolutePath() + File.separator + fileName;
+
+            try {
+                image.transferTo(new File(filePath));
+                imagePaths.add(filePath);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to save image: " + e.getMessage());
+            }
+        }
+
+        return imagePaths;
     }
 
     @Override
@@ -119,7 +148,6 @@ public class ProjectServiceImpl implements ProjectService {
         project.setGrade(updateProjectDTO.getGrade());
         project.setRepo(updateProjectDTO.getRepo());
         project.setTitle(updateProjectDTO.getTitle());
-        project.setScreenshots(updateProjectDTO.getScreenshots());
         project.setDate(updateProjectDTO.getDate());
         project.setPresentation(updateProjectDTO.getPresentation());
 
@@ -131,6 +159,12 @@ public class ProjectServiceImpl implements ProjectService {
             String mainImagePath = saveImage(updateProjectDTO.getMainScreenshot(), project.getTitle());
             project.setMainScreenshot(mainImagePath);
         }
+
+        if (updateProjectDTO.getScreenshots() != null && updateProjectDTO.getScreenshots().length > 0) {
+            List<String> screenshotsPaths = saveImages(updateProjectDTO.getScreenshots(), project.getTitle());
+            project.setScreenshots(screenshotsPaths);
+        }
+
         return projectRepository.save(project);
     }
 
@@ -182,7 +216,6 @@ public class ProjectServiceImpl implements ProjectService {
             project.setDescription(projectDTO.getDescription());
             project.setGrade(projectDTO.getGrade());
             project.setRepo(projectDTO.getRepo());
-            project.setScreenshots(projectDTO.getScreenshots());
             project.setPresentation(projectDTO.getPresentation());
             project.setDate(projectDTO.getDate());
 

@@ -15,7 +15,7 @@ public class ProjectDTO {
     private String description;
     private Integer grade;
     private String repo;
-    private String[] screenshots;
+    private MultipartFile[] screenshots;
     private String presentation;
     private List<Integer> tagsId;
     private List<Integer> usersId;
