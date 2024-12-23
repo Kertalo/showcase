@@ -97,9 +97,9 @@ public class ProjectServiceImpl implements ProjectService {
             directory.mkdirs();
         }
 
-        for (int i = 0; i < images.length; i++) {
-            MultipartFile image = images[i];
-            String fileName = title + "_screenshot_" + i+1 + ".png";
+        for (int i = 1; i < images.length + 1; i++) {
+            MultipartFile image = images[i-1];
+            String fileName = title + "_screenshot_"+ i + ".png";
             String filePath = directory.getAbsolutePath() + File.separator + fileName;
 
             try {
