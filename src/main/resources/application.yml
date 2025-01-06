@@ -23,6 +23,12 @@ spring:
         hibernate:
             ddl-auto: update
 
+
 front:
     local: ${FRONTEND_LOCAL}
     global: ${FRONTEND_GLOBAL}
+
+app:
+    api:
+        swagger:
+            enable: true
