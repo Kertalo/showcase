@@ -24,7 +24,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) {
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        String email = (String) oAuth2User.getAttributes().get("email");
+        String email = (String) oAuth2User.getAttributes().get("preferred_username"); //email
 
         if (email == null) {
             throw new IllegalArgumentException("Email is null. User cannot be registered.");
