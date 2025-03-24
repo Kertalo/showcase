@@ -17,6 +17,7 @@ import org.springframework.web.filter.CorsFilter;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 
@@ -29,6 +30,9 @@ public class SecurityConfig {
 
     @Value("${front.global}")
     String frontendGlobal;
+
+    @Autowired
+    private CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -44,7 +48,8 @@ public class SecurityConfig {
 			)
             .oauth2Login(auth -> auth
                 .userInfoEndpoint(userInfo -> userInfo
-                    .oidcUserService(oidcUserService()))
+                    .userService(customOAuth2UserService))
+                    //.oidcUserService(oidcUserService()))
                 .successHandler(authenticationSuccessHandler())
             );
             

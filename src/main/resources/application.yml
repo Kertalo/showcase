@@ -11,6 +11,7 @@ spring:
                 provider:
                     azure:
                         issuer-uri: https://login.microsoftonline.com/${AZURE_TENANT_ID}/v2.0
+                        #user-name-attribute: preferred_username
                 registration:
                     github:
                         scope: read:user,user:email
@@ -20,26 +21,24 @@ spring:
                         provider: azure
                         client-id: ${AZURE_CLIENT_ID}
                         client-secret: ${AZURE_CLIENT_SECRET}
-                        scope:
-                            - openid
-                            - email
-                            - profile
-    cloud:
-        azure:
-            active-directory:
-                enabled: false
-                profile:
-                    tenant-id: ${AZURE_TENANT_ID}
-                credential:
-                    client-id: ${AZURE_CLIENT_ID}
-                    client-secret: ${AZURE_CLIENT_SECRET}
-                redirect-uri-template: http://localhost:8080/login/oauth2/code/azure
-                application-type: WEB_APPLICATION
-                authorization-clients:
-                    graph:
-                        scopes:
-                            - https://graph.microsoft.com/User.Read
-                            - email
+                        redirect-uri: http://localhost:8080/login/oauth2/code/azure
+                        scope: openid,profile,email
+    #cloud:
+        #azure:
+            #active-directory:
+                #enabled: false
+                #profile:
+                    #tenant-id: ${AZURE_TENANT_ID}
+                #credential:
+                    #client-id: ${AZURE_CLIENT_ID}
+                    #client-secret: ${AZURE_CLIENT_SECRET}
+                #redirect-uri-template: http://localhost:8080/login/oauth2/code/azure
+                #application-type: WEB_APPLICATION
+                #authorization-clients:
+                    #graph:
+                        #scopes:
+                            #- https://graph.microsoft.com/User.Read
+                            #- email
 
     datasource:
         url: ${DB_URL}
