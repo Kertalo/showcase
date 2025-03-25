@@ -1,8 +1,11 @@
 package com.example.showcase.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import com.example.showcase.entity.User;
@@ -21,22 +24,17 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     public CustomOAuth2UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        System.out.println("CustomOAuth2UserService initialized!");
     }
+
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) {
+        System.out.println("Test");
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        String email = (String) oAuth2User.getAttributes().get("upn"); //email
-
         Map<String, Object> attributes = oAuth2User.getAttributes();
-    
-        System.out.println("OAuth2 Provider: " + userRequest.getClientRegistration().getRegistrationId());
-        System.out.println("Attributes: " + attributes);  // Логируем все атрибуты
+        System.out.println(attributes);
+        String email = (String) oAuth2User.getAttributes().get("email"); //email
 
-        //String email = getEmailFromAttributes(userRequest.getClientRegistration().getRegistrationId(), attributes);
-
-        System.out.println(email + " wow");
         if (email == null) {
             throw new IllegalArgumentException("Email is null. User cannot be registered.");
         }
@@ -52,25 +50,5 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         }
 
         return oAuth2User;
-    }
-
-    private String getEmailFromAttributes(String registrationId, Map<String, Object> attributes) {
-        // Для GitHub
-        if ("github".equalsIgnoreCase(registrationId)) {
-            return (String) attributes.get("email");
-        }
-        // Для Azure AD
-        else if ("azure".equalsIgnoreCase(registrationId)) {
-            // В Azure AD email может быть в поле "upn" или "email"
-            String email = (String) attributes.get("upn");
-            if (email == null) {
-                email = (String) attributes.get("email");
-            }
-            return email;
-        }
-        // Для других провайдеров
-        else {
-            return (String) attributes.get("email");
-        }
     }
 }

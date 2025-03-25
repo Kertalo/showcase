@@ -31,8 +31,12 @@ public class SecurityConfig {
     @Value("${front.global}")
     String frontendGlobal;
 
+    @Value("${front.env}")
+    String env;
+
     @Autowired
     private CustomOAuth2UserService customOAuth2UserService;
+
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -44,12 +48,12 @@ public class SecurityConfig {
                 .anyRequest().authenticated())
             .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
             .logout(l -> l
-				.logoutSuccessUrl("production".equalsIgnoreCase(System.getenv("ENVIRONMENT")) ? frontendGlobal : frontendLocal).permitAll()
+				.logoutSuccessUrl("production".equalsIgnoreCase(env) ? frontendGlobal : frontendLocal).permitAll()
 			)
             .oauth2Login(auth -> auth
                 .userInfoEndpoint(userInfo -> userInfo
-                    .userService(customOAuth2UserService))
-                    //.oidcUserService(oidcUserService()))
+                    .userService(customOAuth2UserService).
+                        oidcUserService(oidcUserService()))
                 .successHandler(authenticationSuccessHandler())
             );
             
@@ -65,7 +69,7 @@ public class SecurityConfig {
     AuthenticationSuccessHandler authenticationSuccessHandler() {
         SimpleUrlAuthenticationSuccessHandler handler = new SimpleUrlAuthenticationSuccessHandler();
 
-        handler.setDefaultTargetUrl("production".equalsIgnoreCase(System.getenv("ENVIRONMENT")) ? frontendGlobal : frontendLocal);
+        handler.setDefaultTargetUrl("production".equalsIgnoreCase(env) ? frontendGlobal : frontendLocal);
         return handler;
     }
 

@@ -12,6 +12,9 @@ spring:
                     azure:
                         issuer-uri: https://login.microsoftonline.com/${AZURE_TENANT_ID}/v2.0
                         #user-name-attribute: preferred_username
+                        authorization-uri: https://login.microsoftonline.com/${AZURE_TENANT_ID}/oauth2/v2.0/authorize
+                        token-uri: https://login.microsoftonline.com/${AZURE_TENANT_ID}/oauth2/v2.0/token
+                        user-info-uri: https://graph.microsoft.com/oidc/userinfo
                 registration:
                     github:
                         scope: read:user,user:email
@@ -22,23 +25,23 @@ spring:
                         client-id: ${AZURE_CLIENT_ID}
                         client-secret: ${AZURE_CLIENT_SECRET}
                         redirect-uri: http://localhost:8080/login/oauth2/code/azure
-                        scope: openid,profile,email
-    #cloud:
-        #azure:
-            #active-directory:
-                #enabled: false
-                #profile:
-                    #tenant-id: ${AZURE_TENANT_ID}
-                #credential:
-                    #client-id: ${AZURE_CLIENT_ID}
-                    #client-secret: ${AZURE_CLIENT_SECRET}
-                #redirect-uri-template: http://localhost:8080/login/oauth2/code/azure
-                #application-type: WEB_APPLICATION
-                #authorization-clients:
-                    #graph:
-                        #scopes:
-                            #- https://graph.microsoft.com/User.Read
-                            #- email
+                        scope: openid,profile,email,https://graph.microsoft.com/User.Read
+#    cloud:
+#        azure:
+#            active-directory:
+#                enabled: false
+#                profile:
+#                    tenant-id: ${AZURE_TENANT_ID}
+#                credential:
+#                    client-id: ${AZURE_CLIENT_ID}
+#                    client-secret: ${AZURE_CLIENT_SECRET}
+#                redirect-uri-template: http://localhost:8080/login/oauth2/code/azure
+#                application-type: WEB_APPLICATION
+#                authorization-clients:
+#                    graph:
+#                        scopes:
+#                            - https://graph.microsoft.com/User.Read
+#                            - email
 
     datasource:
         url: ${DB_URL}
@@ -51,6 +54,7 @@ spring:
 
 
 front:
+    env: ${ENVIRONMENT}
     local: ${FRONTEND_LOCAL}
     global: ${FRONTEND_GLOBAL}
 
