@@ -20,11 +20,12 @@ spring:
                         scope: read:user,user:email
                         client-id: ${CLIENT_ID}
                         client-secret: ${CLIENT_SECRET}
+
                     azure:
                         provider: azure
                         client-id: ${AZURE_CLIENT_ID}
                         client-secret: ${AZURE_CLIENT_SECRET}
-                        redirect-uri: http://localhost:8080/login/oauth2/code/azure
+#                        redirect-uri: http://localhost:8080/login/oauth2/code/azure
                         scope: openid,profile,email,https://graph.microsoft.com/User.Read
 #    cloud:
 #        azure:

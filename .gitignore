@@ -5,7 +5,8 @@ HELP.md
 
 /target/
 env.properties
-
+user_images
+project_images
 ### IntelliJ IDEA ###
 .idea
 *.iws
