@@ -7,6 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
@@ -34,12 +38,9 @@ public class SecurityConfig {
     @Value("${front.env}")
     String env;
 
-    @Autowired
-    private CustomOAuth2UserService customOAuth2UserService;
-
-
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http
             .csrf(csrf -> csrf.disable())
                 .cors(withDefaults())
@@ -52,17 +53,12 @@ public class SecurityConfig {
 			)
             .oauth2Login(auth -> auth
                 .userInfoEndpoint(userInfo -> userInfo
-                    .userService(customOAuth2UserService).
-                        oidcUserService(oidcUserService()))
+                        .userService(new DefaultOAuth2UserService())
+                        .oidcUserService(new OidcUserService()))
                 .successHandler(authenticationSuccessHandler())
             );
             
         return http.build();
-    }
-
-    @Bean
-    OidcUserService oidcUserService() {
-        return new OidcUserService();
     }
 
     @Bean
