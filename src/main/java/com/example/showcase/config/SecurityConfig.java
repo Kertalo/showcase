@@ -49,7 +49,10 @@ public class SecurityConfig {
                 .anyRequest().authenticated())
             .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
             .logout(l -> l
-				.logoutSuccessUrl("production".equalsIgnoreCase(env) ? frontendGlobal : frontendLocal).permitAll()
+				.logoutSuccessUrl("production".equalsIgnoreCase(env) ? frontendGlobal : frontendLocal)
+                    .deleteCookies("JSESSIONID")
+                    .invalidateHttpSession(true)
+                    .permitAll()
 			)
             .oauth2Login(auth -> auth
                 .userInfoEndpoint(userInfo -> userInfo

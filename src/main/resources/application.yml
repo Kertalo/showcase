@@ -11,7 +11,6 @@ spring:
                 provider:
                     azure:
                         issuer-uri: https://login.microsoftonline.com/${AZURE_TENANT_ID}/v2.0
-                        #user-name-attribute: preferred_username
                         authorization-uri: https://login.microsoftonline.com/${AZURE_TENANT_ID}/oauth2/v2.0/authorize
                         token-uri: https://login.microsoftonline.com/${AZURE_TENANT_ID}/oauth2/v2.0/token
                         user-info-uri: https://graph.microsoft.com/oidc/userinfo
@@ -25,24 +24,7 @@ spring:
                         provider: azure
                         client-id: ${AZURE_CLIENT_ID}
                         client-secret: ${AZURE_CLIENT_SECRET}
-#                        redirect-uri: http://localhost:8080/login/oauth2/code/azure
                         scope: openid,profile,email,https://graph.microsoft.com/User.Read
-#    cloud:
-#        azure:
-#            active-directory:
-#                enabled: false
-#                profile:
-#                    tenant-id: ${AZURE_TENANT_ID}
-#                credential:
-#                    client-id: ${AZURE_CLIENT_ID}
-#                    client-secret: ${AZURE_CLIENT_SECRET}
-#                redirect-uri-template: http://localhost:8080/login/oauth2/code/azure
-#                application-type: WEB_APPLICATION
-#                authorization-clients:
-#                    graph:
-#                        scopes:
-#                            - https://graph.microsoft.com/User.Read
-#                            - email
 
     datasource:
         url: ${DB_URL}
@@ -53,6 +35,12 @@ spring:
         hibernate:
             ddl-auto: update
 
+server:
+    servlet:
+        session:
+            cookie:
+                same-site: none
+                secure: true
 
 front:
     env: ${ENVIRONMENT}
