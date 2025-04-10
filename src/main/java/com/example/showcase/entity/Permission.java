@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,51 +20,52 @@ public class Permission {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "create_track")
-    private Boolean createTrack;
+    @Column(name = "create_track", nullable = false)
+    private Boolean createTrack = false;
 
-    @Column(name = "read_track")
-    private Boolean readTrack;
+    @Column(name = "read_track", nullable = false)
+    private Boolean readTrack = false;
 
-    @Column(name = "update_track")
-    private Boolean updateTrack;
+    @Column(name = "update_track", nullable = false)
+    private Boolean updateTrack = false;
 
-    @Column(name = "delete_track")
-    private Boolean deleteTrack;
+    @Column(name = "delete_track", nullable = false)
+    private Boolean deleteTrack = false;
 
-    @Column(name = "create_project")
-    private Boolean createProject;
+    @Column(name = "create_project", nullable = false)
+    private Boolean createProject = false;
 
-    @Column(name = "read_project")
-    private Boolean readProject;
+    @Column(name = "read_project", nullable = false)
+    private Boolean readProject = false;
 
-    @Column(name = "update_project")
-    private Boolean updateProject;
+    @Column(name = "update_project", nullable = false)
+    private Boolean updateProject = false;
 
-    @Column(name = "delete_project")
-    private Boolean deleteProject;
+    @Column(name = "delete_project", nullable = false)
+    private Boolean deleteProject = false;
 
-    @Column(name = "create_user")
-    private Boolean createUser;
+    @Column(name = "create_user", nullable = false)
+    private Boolean createUser = false;
 
-    @Column(name = "read_user")
-    private Boolean readUser;
+    @Column(name = "read_user", nullable = false)
+    private Boolean readUser = false;
 
-    @Column(name = "update_user")
-    private Boolean updateUser;
+    @Column(name = "update_user", nullable = false)
+    private Boolean updateUser = false;
 
-    @Column(name = "delete_user")
-    private Boolean deleteUser;
+    @Column(name = "delete_user", nullable = false)
+    private Boolean deleteUser = false;
 
-    @Column(name = "create_tag")
-    private Boolean createTag;
+    @Column(name = "create_tag", nullable = false)
+    private Boolean createTag = false;
 
-    @Column(name = "read_tag")
-    private Boolean readTag;
+    @Column(name = "read_tag", nullable = false)
+    private Boolean readTag = false;
 
-    @Column(name = "update_tag")
-    private Boolean updateTag;
+    @Column(name = "update_tag", nullable = false)
+    private Boolean updateTag = false;
 
-    @Column(name = "delete_tag")
-    private Boolean deleteTag;
+    @Column(name = "delete_tag", nullable = false)
+    private Boolean deleteTag = false;
+
 }

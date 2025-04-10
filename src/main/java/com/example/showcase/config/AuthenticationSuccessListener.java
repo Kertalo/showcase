@@ -4,7 +4,6 @@ import com.example.showcase.entity.Role;
 import com.example.showcase.entity.User;
 import com.example.showcase.repository.UserRepository;
 import com.example.showcase.service.RoleService;
-import com.example.showcase.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;

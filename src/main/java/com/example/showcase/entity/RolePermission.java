@@ -17,9 +17,11 @@ public class RolePermission {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "role_id", nullable = false)
-    private Integer roleId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "role_id", nullable = false)
+    private Role role;
 
-    @Column(name = "permission_id", nullable = false)
-    private Integer permissionId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "permission_id", nullable = false)
+    private Permission permission;
 }
