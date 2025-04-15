@@ -5,6 +5,7 @@ import com.example.showcase.dto.UserDTO;
 import com.example.showcase.entity.Role;
 import com.example.showcase.entity.Tag;
 import com.example.showcase.entity.Track;
+import com.example.showcase.primary_filling.primaryFillingExecutor;
 import com.example.showcase.service.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.Bean;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootApplication
@@ -41,11 +43,12 @@ public class ShowcaseApplication {
 	private RoleService roleService;
 
 	@Bean
+	//Primary Filling
 	CommandLineRunner runner() {
 		return _ -> {
 			ObjectMapper mapper = new ObjectMapper();
 			TypeReference<List<Track>> trackTypeReference = new TypeReference<List<Track>>() {};
-			InputStream trackInputStream = TypeReference.class.getResourceAsStream("/json/tracks.json");
+			InputStream trackInputStream = TypeReference.class.getResourceAsStream("/primary_filling/tracks.json");
 			try {
 				List<Track> tracks = mapper.readValue(trackInputStream, trackTypeReference);
 				trackService.save(tracks);
@@ -55,7 +58,7 @@ public class ShowcaseApplication {
 			}
 
 			TypeReference<List<Tag>> tagTypeReference = new TypeReference<List<Tag>>() {};
-			InputStream tagInputStream = TypeReference.class.getResourceAsStream("/json/tags.json");
+			InputStream tagInputStream = TypeReference.class.getResourceAsStream("/primary_filling/tags.json");
 			try {
 				List<Tag> tags = mapper.readValue(tagInputStream, tagTypeReference);
 				tagService.save(tags);
@@ -65,7 +68,7 @@ public class ShowcaseApplication {
 			}
 
 			TypeReference<List<Role>> roleTypeReference = new TypeReference<List<Role>>() {};
-			InputStream roleInputStream = TypeReference.class.getResourceAsStream("/json/roles.json");
+			InputStream roleInputStream = TypeReference.class.getResourceAsStream("/primary_filling/roles.json");
 			try {
 				List<Role> roles = mapper.readValue(roleInputStream, roleTypeReference);
 				roleService.save(roles);
@@ -74,24 +77,24 @@ public class ShowcaseApplication {
 				System.out.println("Unable to save Roles: " + e.getMessage());
 			}
 
-			TypeReference<List<UserDTO>> userTypeReference = new TypeReference<List<UserDTO>>() {};
-			InputStream userInputStream = TypeReference.class.getResourceAsStream("/json/users.json");
-			try {
-				List<UserDTO> users = mapper.readValue(userInputStream, userTypeReference);
+			List<UserDTO> users = new ArrayList<>();
+			List<ProjectDTO> projects = new ArrayList<>();
+			primaryFillingExecutor.execute(users,projects);
+
+			if (users.isEmpty()){
+				System.out.println("Unable to save Users");
+			}
+			else{
 				userService.saveUsersFromDTO(users);
 				System.out.println("Users Saved!");
-			} catch (IOException e) {
-				System.out.println("Unable to save Users: " + e.getMessage());
 			}
 
-			TypeReference<List<ProjectDTO>> projectTypeReference = new TypeReference<List<ProjectDTO>>() {};
-			InputStream projectInputStream = TypeReference.class.getResourceAsStream("/json/projects.json");
-			try {
-				List<ProjectDTO> projects = mapper.readValue(projectInputStream, projectTypeReference);
+			if(projects.isEmpty()){
+				System.out.println("Unable to save Projects");
+			}
+			else {
 				projectService.saveProjectsFromDTO(projects);
 				System.out.println("Projects Saved!");
-			} catch (IOException e) {
-				System.out.println("Unable to save Projects: " + e.getMessage());
 			}
 		};
 	}
