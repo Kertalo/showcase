@@ -93,7 +93,7 @@ public class ShowcaseApplication {
 				System.out.println("Unable to save Projects");
 			}
 			else {
-				projectService.saveProjectsFromDTO(projects);
+				projectService.saveProjectsFromDTO(projects); //TODO не влезает description
 				System.out.println("Projects Saved!");
 			}
 		};
