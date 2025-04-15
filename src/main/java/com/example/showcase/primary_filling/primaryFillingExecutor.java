@@ -49,9 +49,10 @@ public class primaryFillingExecutor {
 
         }
         catch (FileNotFoundException e){
-            System.out.println(users.size());
-            System.out.println(projects.size());
+
         }
+//        System.out.println(users.size());
+//        System.out.println(projects.size());
     }
 
 
