@@ -13,6 +13,7 @@ import com.example.showcase.repository.UserRepository;
 import com.example.showcase.service.ProjectService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -252,6 +253,34 @@ public class ProjectServiceImpl implements ProjectService {
         String filePath = project.get().getMainScreenshot();
         byte[] images = Files.readAllBytes(new File(filePath).toPath());
         return images;
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<Project> getProjectsByTags(List<String> tagNames) {
+        return projectRepository.findByTagNames(tagNames);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<Project> getProjectsByTrack(String trackName) {
+        return projectRepository.findByTrackName(trackName);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<Project> getProjectsByTrackAndTags(String trackName, List<String> tagNames) {
+        if ((trackName == null || trackName.trim().isEmpty()) &&
+                (tagNames == null || tagNames.isEmpty() || tagNames.stream().allMatch(String::isBlank))) {
+            return List.of();
+        }
+        if (trackName != null && trackName.trim().isEmpty()) {
+            trackName = null;
+        }
+        if (tagNames != null && (tagNames.isEmpty() || tagNames.stream().allMatch(String::isBlank))) {
+            tagNames = null;
+        }
+        return projectRepository.findByTrackAndTags(trackName, tagNames);
     }
 
 }
