@@ -32,5 +32,5 @@ public interface ProjectService {
     List<Project> getProjectsByTrack(String trackName);
 
     @Transactional(readOnly = true)
-    List<Project> getProjectsByTrackAndTags(String trackName, List<String> tagNames);
+    List<Project> getProjectsByTrackAndTags(String trackName, String dateName, List<String> tagNames);
 }

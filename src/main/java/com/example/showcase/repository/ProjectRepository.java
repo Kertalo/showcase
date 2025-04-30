@@ -17,6 +17,7 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
 
     @Query("SELECT DISTINCT p FROM Project p LEFT JOIN FETCH p.tags " +
             "WHERE (:trackName IS NULL OR p.track.name = :trackName) " +
+            "AND (:dateName IS NULL OR p.date.name = :dateName)" +
             "AND (:tagNames IS NULL OR EXISTS (SELECT t FROM p.tags t WHERE t.name IN :tagNames))")
-    List<Project> findByTrackAndTags(@Param("trackName") String trackName, @Param("tagNames") List<String> tagNames);
+    List<Project> findByTrackAndTags(@Param("trackName") String trackName,@Param("dateName") String dateName, @Param("tagNames") List<String> tagNames);
 }

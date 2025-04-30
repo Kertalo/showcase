@@ -1,88 +1,109 @@
 package com.example.showcase.config;
 
-import com.example.showcase.entity.Permission;
+import com.example.showcase.dto.ProjectDTO;
+import com.example.showcase.dto.UserDTO;
+import com.example.showcase.entity.Date;
 import com.example.showcase.entity.Role;
-import com.example.showcase.entity.RolePermission;
-import com.example.showcase.repository.PermissionRepository;
-import com.example.showcase.repository.RolePermissionRepository;
-import com.example.showcase.repository.RoleRepository;
-import lombok.RequiredArgsConstructor;
+import com.example.showcase.entity.Tag;
+import com.example.showcase.entity.Track;
+import com.example.showcase.service.*;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
 @Component
-@RequiredArgsConstructor
-public class DataLoader implements CommandLineRunner {
+public class DataLoader {
+    @Autowired
+    private TrackService trackService;
 
-    private final RoleRepository roleRepository;
-    private final PermissionRepository permissionRepository;
-    private final RolePermissionRepository rolePermissionRepository;
+    @Autowired
+    private TagService tagService;
 
-    @Override
-    public void run(String... args) throws Exception {
-        if (permissionRepository.count() == 0) {
-            // Участник
-            Permission participantPermission = new Permission();
-            participantPermission.setCreateProject(true);
-            participantPermission.setReadProject(true);
-            participantPermission.setUpdateProject(true);
-            participantPermission.setDeleteProject(false);
-            participantPermission.setCreateTrack(false);
-            participantPermission.setReadTrack(false);
-            participantPermission.setUpdateTrack(false);
-            participantPermission.setDeleteTrack(false);
-            participantPermission.setCreateUser(false);
-            participantPermission.setReadUser(false);
-            participantPermission.setUpdateUser(false);
-            participantPermission.setDeleteUser(false);
-            participantPermission.setCreateTag(false);
-            participantPermission.setReadTag(false);
-            participantPermission.setUpdateTag(false);
-            participantPermission.setDeleteTag(false);
+    @Autowired
+    private UserService userService;
 
-            // Администратор
-            Permission adminPermission = new Permission();
-            adminPermission.setCreateProject(true);
-            adminPermission.setReadProject(true);
-            adminPermission.setUpdateProject(true);
-            adminPermission.setDeleteProject(true);
-            adminPermission.setCreateTrack(true);
-            adminPermission.setReadTrack(true);
-            adminPermission.setUpdateTrack(true);
-            adminPermission.setDeleteTrack(true);
-            adminPermission.setCreateUser(true);
-            adminPermission.setReadUser(true);
-            adminPermission.setUpdateUser(true);
-            adminPermission.setDeleteUser(true);
-            adminPermission.setCreateTag(true);
-            adminPermission.setReadTag(true);
-            adminPermission.setUpdateTag(true);
-            adminPermission.setDeleteTag(true);
+    @Autowired
+    private ProjectService projectService;
 
-            permissionRepository.save(participantPermission);
-            permissionRepository.save(adminPermission);
-        }
+    @Autowired
+    private RoleService roleService;
 
-        if (rolePermissionRepository.count() == 0) {
-            Role participantRole = roleRepository.findById(1)
-                    .orElseThrow(() -> new RuntimeException("Role 'Participant' not found"));
-            Role adminRole = roleRepository.findById(2)
-                    .orElseThrow(() -> new RuntimeException("Role 'Admin' not found"));
+    @Autowired
+    private DateService dateService;
 
-            Permission participantPermission = permissionRepository.findById(1)
-                    .orElseThrow(() -> new RuntimeException("Permission for Participant not found"));
-            Permission adminPermission = permissionRepository.findById(2)
-                    .orElseThrow(() -> new RuntimeException("Permission for Admin not found"));
+    @Bean
+    @Order(1)
+    CommandLineRunner runner() {
+        return _ -> {
+            ObjectMapper mapper = new ObjectMapper();
+            TypeReference<List<Track>> trackTypeReference = new TypeReference<List<Track>>() {};
+            InputStream trackInputStream = TypeReference.class.getResourceAsStream("/json/tracks.json");
+            try {
+                List<Track> tracks = mapper.readValue(trackInputStream, trackTypeReference);
+                trackService.save(tracks);
+                System.out.println("Tracks Saved!");
+            } catch (IOException e) {
+                System.out.println("Unable to save Tracks: " + e.getMessage());
+            }
 
-            RolePermission participantRolePermission = new RolePermission();
-            participantRolePermission.setRole(participantRole);
-            participantRolePermission.setPermission(participantPermission);
-            rolePermissionRepository.save(participantRolePermission);
+            TypeReference<List<Tag>> tagTypeReference = new TypeReference<List<Tag>>() {};
+            InputStream tagInputStream = TypeReference.class.getResourceAsStream("/json/tags.json");
+            try {
+                List<Tag> tags = mapper.readValue(tagInputStream, tagTypeReference);
+                tagService.save(tags);
+                System.out.println("Tags Saved!");
+            } catch (IOException e) {
+                System.out.println("Unable to save Tags: " + e.getMessage());
+            }
 
-            RolePermission adminRolePermission = new RolePermission();
-            adminRolePermission.setRole(adminRole);
-            adminRolePermission.setPermission(adminPermission);
-            rolePermissionRepository.save(adminRolePermission);
-        }
+            TypeReference<List<Role>> roleTypeReference = new TypeReference<List<Role>>() {};
+            InputStream roleInputStream = TypeReference.class.getResourceAsStream("/json/roles.json");
+            try {
+                List<Role> roles = mapper.readValue(roleInputStream, roleTypeReference);
+                roleService.save(roles);
+                System.out.println("Roles Saved!");
+            } catch (IOException e) {
+                System.out.println("Unable to save Roles: " + e.getMessage());
+            }
+
+            TypeReference<List<UserDTO>> userTypeReference = new TypeReference<List<UserDTO>>() {};
+            InputStream userInputStream = TypeReference.class.getResourceAsStream("/json/users.json");
+            try {
+                List<UserDTO> users = mapper.readValue(userInputStream, userTypeReference);
+                userService.saveUsersFromDTO(users);
+                System.out.println("Users Saved!");
+            } catch (IOException e) {
+                System.out.println("Unable to save Users: " + e.getMessage());
+            }
+
+            TypeReference<List<Date>> dateTypeReference = new TypeReference<List<Date>>() {};
+            InputStream dateInputStream = TypeReference.class.getResourceAsStream("/json/dates.json");
+            try {
+                List<Date> dates = mapper.readValue(dateInputStream, dateTypeReference);
+                dateService.save(dates);
+                System.out.println("Dates Saved!");
+            } catch (IOException e) {
+                System.out.println("Unable to save Dates: " + e.getMessage());
+            }
+
+            TypeReference<List<ProjectDTO>> projectTypeReference = new TypeReference<List<ProjectDTO>>() {};
+            InputStream projectInputStream = TypeReference.class.getResourceAsStream("/json/projects.json");
+            try {
+                List<ProjectDTO> projects = mapper.readValue(projectInputStream, projectTypeReference);
+                projectService.saveProjectsFromDTO(projects);
+                System.out.println("Projects Saved!");
+            } catch (IOException e) {
+                System.out.println("Unable to save Projects: " + e.getMessage());
+            }
+
+        };
     }
 }

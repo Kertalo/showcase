@@ -8,7 +8,8 @@
     "repo": "http://example.com",
     "presentation": "http://example.com",
     "usersId": [10],
-    "tagsId": [1,2]
+    "tagsId": [1,2],
+    "dateId": 1
   },
   {
     "grade": 72,
@@ -18,7 +19,8 @@
     "repo": "http://example.com",
     "presentation": "http://example.com",
     "tagsId": [1,2],
-    "usersId": [7,8,9]
+    "usersId": [7,8,9],
+    "dateId": 2
   },
   {
     "grade": 83,
@@ -28,7 +30,8 @@
     "repo": "http://example.com",
     "presentation": "http://example.com",
     "usersId": [3,2,1,4],
-    "tagsId": [1,2]
+    "tagsId": [1,2],
+    "dateId": 3
   },
   {
     "grade": 94,
@@ -38,16 +41,18 @@
     "repo": "http://example.com",
     "presentation": "http://example.com",
     "usersId": [5,2],
-    "tagsId": [1,2]
+    "tagsId": [1,2],
+    "dateId": 1
   },
   {
     "grade": 69,
     "id": 5,
     "title": "Интерактивная игра с элементами искусственного интеллекта: создание уникальных сценариев на основе действий игроков.",
-    "trackId": 3,
+    "trackId": 2,
     "repo": "http://example.com",
     "presentation": "http://example.com",
     "usersId": [1,2,3],
-    "tagsId": [1,2,3]
+    "tagsId": [1,2,3],
+    "dateId": 2
   }
 ]

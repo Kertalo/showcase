@@ -84,14 +84,16 @@ public class ProjectController {
     @GetMapping("/filter")
     public ResponseEntity<?> getProjectsByFilter(
             @RequestParam(value = "track", required = false) String track,
+            @RequestParam(value = "date", required = false) String date,
             @RequestParam(value = "tags", required = false) List<String> tags) {
         if ((track == null || track.trim().isEmpty()) &&
+                (date == null || date.trim().isEmpty()) &&
                 (tags == null || tags.isEmpty() || tags.stream().allMatch(String::isBlank))) {
             return ResponseEntity.ok(projectService.getAllProjects());
         }
-        List<Project> projects = projectService.getProjectsByTrackAndTags(track, tags);
+        List<Project> projects = projectService.getProjectsByTrackAndTags(track, date, tags);
         if (projects.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No projects found for filters: track=" + track + ", tags=" + tags);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No projects found for filters: track=" + track + ", date=" + date + ", tags=" + tags);
         }
         return ResponseEntity.ok(projects);
     }
