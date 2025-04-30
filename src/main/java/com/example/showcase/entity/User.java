@@ -30,6 +30,12 @@ public class User {
     @Column(name = "email")
     private String email;
 
+    @Column(name = "course")
+    private String course;
+
+    @Column(name = "student_group")
+    private String group;
+
     @Column(name = "image")
     private String imagePath;
 }

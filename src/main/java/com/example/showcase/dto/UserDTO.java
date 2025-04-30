@@ -12,5 +12,7 @@ public class UserDTO {
     private Integer roleId;
     private String login;
     private String email;
+    private String course;
+    private String group;
     private MultipartFile image;
 }

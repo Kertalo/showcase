@@ -36,6 +36,8 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         user.setFullName(userDTO.getFullName());
         user.setLogin(userDTO.getLogin());
+        user.setCourse(userDTO.getCourse());
+        user.setGroup(userDTO.getGroup());
         user.setRole(role);
         user.setImagePath(imagePath);
         user.setEmail(userDTO.getEmail());
@@ -79,6 +81,8 @@ public class UserServiceImpl implements UserService {
                         .orElseThrow(() -> new ResourceNotFoundException("Role not found"));
         user.setFullName(updateUserDTO.getFullName());
         user.setLogin(updateUserDTO.getLogin());
+        user.setCourse(updateUserDTO.getCourse());
+        user.setGroup(updateUserDTO.getGroup());
         user.setRole(role);
         user.setEmail(updateUserDTO.getEmail());
 
@@ -125,6 +129,8 @@ public class UserServiceImpl implements UserService {
             user.setLogin(userDTO.getLogin());
             user.setId(userDTO.getId());
             user.setEmail(userDTO.getEmail());
+            user.setGroup(userDTO.getGroup());
+            user.setCourse(userDTO.getCourse());
 
             if (userDTO.getImage() != null && !userDTO.getImage().isEmpty()) {
                 String imagePath = saveImage(userDTO.getImage(), user.getFullName());
