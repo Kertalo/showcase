@@ -2,6 +2,7 @@ package com.example.showcase.service;
 
 import com.example.showcase.dto.ProjectDTO;
 import com.example.showcase.entity.Project;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.List;
@@ -22,4 +23,14 @@ public interface ProjectService {
     Iterable<Project> saveProjectsFromDTO(List<ProjectDTO> projectDTOs);
 
     byte[] downloadMainImageFromFileSystem(Integer projectId) throws IOException;
+
+    @Transactional(readOnly = true)
+    List<Project> getProjectsByTags(List<String> tagNames);
+
+
+    @Transactional(readOnly = true)
+    List<Project> getProjectsByTrack(String trackName);
+
+    @Transactional(readOnly = true)
+    List<Project> getProjectsByTrackAndTags(String trackName, String dateName, List<String> tagNames);
 }

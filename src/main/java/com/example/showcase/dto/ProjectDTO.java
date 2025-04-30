@@ -19,6 +19,6 @@ public class ProjectDTO {
     private String presentation;
     private List<Integer> tagsId;
     private List<Integer> usersId;
-    private String date;
+    private Integer dateId;
     private MultipartFile mainScreenshot;
 }

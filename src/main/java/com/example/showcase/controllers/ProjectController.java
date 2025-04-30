@@ -57,4 +57,45 @@ public class ProjectController {
                 .body(imageData);
     }
 
+    @GetMapping("/by-tag")
+    public ResponseEntity<?> getProjectsByTags(@RequestParam(value = "tags", required = false) List<String> tagNames) {
+        if (tagNames == null || tagNames.isEmpty() || tagNames.stream().allMatch(String::isBlank)) {
+            return ResponseEntity.badRequest().body("Требуется указать действительное название тега");
+        }
+        List<Project> projects = projectService.getProjectsByTags(tagNames);
+        if (projects.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Не было найдено проектов по тегам: " + tagNames);
+        }
+        return ResponseEntity.ok(projects);
+    }
+
+    @GetMapping("/by-track")
+    public ResponseEntity<?> getProjectsByTrackName(@RequestParam(value = "track", required = false) String trackName) {
+        if (trackName == null || trackName.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Требуется указать действительное название трека");
+        }
+        List<Project> projects = projectService.getProjectsByTrack(trackName);
+        if (projects.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Не было найдено проектов по трекам: " + trackName);
+        }
+        return ResponseEntity.ok(projects);
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<?> getProjectsByFilter(
+            @RequestParam(value = "track", required = false) String track,
+            @RequestParam(value = "date", required = false) String date,
+            @RequestParam(value = "tags", required = false) List<String> tags) {
+        if ((track == null || track.trim().isEmpty()) &&
+                (date == null || date.trim().isEmpty()) &&
+                (tags == null || tags.isEmpty() || tags.stream().allMatch(String::isBlank))) {
+            return ResponseEntity.ok(projectService.getAllProjects());
+        }
+        List<Project> projects = projectService.getProjectsByTrackAndTags(track, date, tags);
+        if (projects.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No projects found for filters: track=" + track + ", date=" + date + ", tags=" + tags);
+        }
+        return ResponseEntity.ok(projects);
+    }
+
 }
