@@ -57,8 +57,9 @@ public class Project {
     )
     private List<User> users;
 
-    @Column(name = "date")
-    private String date;
+    @ManyToOne
+    @JoinColumn(name = "date_id", referencedColumnName = "id")
+    private Date date;
 
     @Column(name = "image")
     private String mainScreenshot;

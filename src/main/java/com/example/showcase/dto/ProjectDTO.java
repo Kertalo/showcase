@@ -8,18 +8,17 @@ import java.util.List;
 
 @Getter
 @Setter
-//TODO
 public class ProjectDTO {
-    private Integer id; // автогенерация или инкремент
-    private Integer trackId; // Бакалавриат - 1 ???
-    private String title; //Название команды
-    private String description; // Анн Аннотация к проекту
-    private Integer grade; // Общ Итого оценка
-    private String repo; // Анн Репозиторий
-    private MultipartFile[] screenshots; // ---
-    private String presentation; // ---
-    private List<Integer> tagsId; // Анн Тип проекта
-    private List<Integer> usersId; // ключ на UserDTO???
-    private String date; // 2023-2024 (а.г)
-    private MultipartFile mainScreenshot; // ---
+    private Integer id;
+    private Integer trackId;
+    private String title;
+    private String description;
+    private Integer grade;
+    private String repo;
+    private MultipartFile[] screenshots;
+    private String presentation;
+    private List<Integer> tagsId;
+    private List<Integer> usersId;
+    private Integer dateId;
+    private MultipartFile mainScreenshot;
 }

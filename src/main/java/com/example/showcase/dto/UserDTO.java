@@ -6,15 +6,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
-
-//TODO
 public class UserDTO {
-    private Integer id; // автогенерация или инкремент
-    private String fullName; // ФИО
-    private Integer roleId; // Роль Участник - 1
-    private String login; // ---
-    private String email; // ---
-    private MultipartFile image; // ---
-    //Курс Общ.
-    //Группа Общ.
+    private Integer id;
+    private String fullName;
+    private Integer roleId;
+    private String login;
+    private String email;
+    private String course;
+    private String group;
+    private MultipartFile image;
 }

@@ -1,18 +1,13 @@
 package com.example.showcase.service.impl;
 
 import com.example.showcase.dto.ProjectDTO;
-import com.example.showcase.entity.Tag;
-import com.example.showcase.entity.Track;
-import com.example.showcase.entity.User;
+import com.example.showcase.entity.*;
 import com.example.showcase.exception.ResourceNotFoundException;
-import com.example.showcase.entity.Project;
-import com.example.showcase.repository.ProjectRepository;
-import com.example.showcase.repository.TagRepository;
-import com.example.showcase.repository.TrackRepository;
-import com.example.showcase.repository.UserRepository;
+import com.example.showcase.repository.*;
 import com.example.showcase.service.ProjectService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -25,6 +20,7 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class ProjectServiceImpl implements ProjectService {
+    private final DateRepository dateRepository;
     private TagRepository tagRepository;
     private UserRepository userRepository;
     private ProjectRepository projectRepository;
@@ -35,6 +31,10 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public Project createProject(ProjectDTO projectDTO) {
+
+        Date date = dateRepository.findById(projectDTO.getDateId())
+                .orElseThrow(() -> new ResourceNotFoundException("Date not found"));
+
         Track track = trackRepository.findById(projectDTO.getTrackId())
             .orElseThrow(() -> new ResourceNotFoundException("Track not found"));
 
@@ -59,11 +59,11 @@ public class ProjectServiceImpl implements ProjectService {
         project.setTrack(track);
         project.setTags(tags);
         project.setUsers(users);
+        project.setDate(date);
         project.setDescription(projectDTO.getDescription());
         project.setTitle(projectDTO.getTitle());
         project.setRepo(projectDTO.getRepo());
         project.setGrade(projectDTO.getGrade());
-        project.setDate(projectDTO.getDate());
 
         project.setMainScreenshot(imagePath);
         project.setScreenshots(screenshotsPaths);
@@ -146,6 +146,10 @@ public class ProjectServiceImpl implements ProjectService {
 
         Track track = trackRepository.findById(updateProjectDTO.getTrackId())
                 .orElseThrow(() -> new ResourceNotFoundException("Track not found"));
+
+        Date date = dateRepository.findById(updateProjectDTO.getDateId())
+                .orElseThrow(() -> new ResourceNotFoundException("Date not found"));
+
         List<Integer> tagIds = updateProjectDTO.getTagsId();
         List<Tag> tags = tagRepository.findAllById(tagIds);
         if (tags.size() != tagIds.size()) {
@@ -162,10 +166,10 @@ public class ProjectServiceImpl implements ProjectService {
         project.setGrade(updateProjectDTO.getGrade());
         project.setRepo(updateProjectDTO.getRepo());
         project.setTitle(updateProjectDTO.getTitle());
-        project.setDate(updateProjectDTO.getDate());
         project.setPresentation(updateProjectDTO.getPresentation());
 
         project.setTrack(track);
+        project.setDate(date);
         project.setTags(tags);
         project.setUsers(users);
 
@@ -220,6 +224,10 @@ public class ProjectServiceImpl implements ProjectService {
                     .orElseThrow(() -> new ResourceNotFoundException("Track not found"));
             project.setTrack(track);
 
+           Date date = dateRepository.findById(projectDTO.getDateId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Date not found"));
+            project.setDate(date);
+
             List<Tag> tags = tagRepository.findAllById(projectDTO.getTagsId());
             if (tags.size() != projectDTO.getTagsId().size()) {
                 throw new ResourceNotFoundException("One or more tags not found");
@@ -238,7 +246,6 @@ public class ProjectServiceImpl implements ProjectService {
             project.setGrade(projectDTO.getGrade());
             project.setRepo(projectDTO.getRepo());
             project.setPresentation(projectDTO.getPresentation());
-            project.setDate(projectDTO.getDate());
 
             projects.add(project);
         }
@@ -252,6 +259,38 @@ public class ProjectServiceImpl implements ProjectService {
         String filePath = project.get().getMainScreenshot();
         byte[] images = Files.readAllBytes(new File(filePath).toPath());
         return images;
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<Project> getProjectsByTags(List<String> tagNames) {
+        return projectRepository.findByTagNames(tagNames);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<Project> getProjectsByTrack(String trackName) {
+        return projectRepository.findByTrackName(trackName);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<Project> getProjectsByTrackAndTags(String trackName, String dateName, List<String> tagNames) {
+        if ((trackName == null || trackName.trim().isEmpty()) &&
+                (dateName == null || dateName.trim().isEmpty()) &&
+                (tagNames == null || tagNames.isEmpty() || tagNames.stream().allMatch(String::isBlank))) {
+            return List.of();
+        }
+        if (trackName != null && trackName.trim().isEmpty()) {
+            trackName = null;
+        }
+        if (dateName != null && dateName.trim().isEmpty()) {
+            dateName = null;
+        }
+        if (tagNames != null && (tagNames.isEmpty() || tagNames.stream().allMatch(String::isBlank))) {
+            tagNames = null;
+        }
+        return projectRepository.findByTrackAndTags(trackName, dateName, tagNames);
     }
 
 }
