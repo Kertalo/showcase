@@ -3,8 +3,6 @@ package com.example.showcase.primary_filling;
 import com.opencsv.bean.CsvBindByName;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 public class AnnotationTableDTO {
 
@@ -27,7 +25,7 @@ public class AnnotationTableDTO {
     private String goal;
 
     @CsvBindByName(column = "Задачи проекта")
-    private String tasks ;
+    private String tasks;
 
     @CsvBindByName(column = "Репозиторий")
     private String repository;

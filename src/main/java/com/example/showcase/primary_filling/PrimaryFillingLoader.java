@@ -9,8 +9,7 @@ import java.io.FileReader;
 import java.util.List;
 import java.util.Optional;
 
-
-public class primaryFillingExecutor {
+public class PrimaryFillingLoader {
 
     //Общие списки
     private static final String summaryTable = "src/main/resources/primary_filling/Списки команд '23-'24 - Общие списки.csv";
@@ -21,13 +20,13 @@ public class primaryFillingExecutor {
     //Таблица с баллами
     private static final String scoreTable = "src/main/resources/primary_filling/Списки команд '23-'24 - Баллы.csv";
 
-    public static void execute(List<UserDTO> users, List<ProjectDTO> projects) {
+    public static void scrapTables(List<UserDTO> users, List<ProjectDTO> projects) {
 
         int userCnt = 0;
         int projectCnt = 0;
         try {
-            List<SummaryTableDTO> dataSummaryTable = executeSummaryTable();
-            List<AnnotationTableDTO> dataAnnotationTable = executeAnnotationTable();
+            List<SummaryTableDTO> dataSummaryTable = scrapSummaryTable();
+            List<AnnotationTableDTO> dataAnnotationTable = scrapAnnotationTable();
 
             for (SummaryTableDTO singleSummary : dataSummaryTable) {
                 UserDTO user = PrimaryFillingMapper.INSTANCE.mapToUserDTO(singleSummary);
@@ -51,15 +50,14 @@ public class primaryFillingExecutor {
         }
     }
 
-
-    private static List<SummaryTableDTO> executeSummaryTable() throws FileNotFoundException {
+    private static List<SummaryTableDTO> scrapSummaryTable() throws FileNotFoundException {
         return new CsvToBeanBuilder<SummaryTableDTO>(new FileReader(summaryTable))
                 .withType(SummaryTableDTO.class)
                 .build()
                 .parse();
     }
 
-    private static List<AnnotationTableDTO> executeAnnotationTable() throws FileNotFoundException {
+    private static List<AnnotationTableDTO> scrapAnnotationTable() throws FileNotFoundException {
         return new CsvToBeanBuilder<AnnotationTableDTO>(new FileReader(annotationTable))
                 .withType(AnnotationTableDTO.class)
                 .build()
