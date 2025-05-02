@@ -6,7 +6,6 @@ import com.opencsv.bean.CsvToBeanBuilder;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,37 +21,34 @@ public class primaryFillingExecutor {
     //Таблица с баллами
     private static final String scoreTable = "src/main/resources/primary_filling/Списки команд '23-'24 - Баллы.csv";
 
-    public static void execute(List<UserDTO> users,List<ProjectDTO> projects){
+    public static void execute(List<UserDTO> users, List<ProjectDTO> projects) {
 
-        int userCnt =0;
-        int projectCnt=0;
+        int userCnt = 0;
+        int projectCnt = 0;
         try {
-            List<SummaryTableDTO> dataSummaryTable= executeSummaryTable();
-            List<AnnotationTableDTO> dataAnnotationTable= executeAnnotationTable();
+            List<SummaryTableDTO> dataSummaryTable = executeSummaryTable();
+            List<AnnotationTableDTO> dataAnnotationTable = executeAnnotationTable();
 
-            for(SummaryTableDTO singleSummary: dataSummaryTable){
+            for (SummaryTableDTO singleSummary : dataSummaryTable) {
                 UserDTO user = PrimaryFillingMapper.INSTANCE.mapToUserDTO(singleSummary);
                 user.setId(++userCnt);
                 users.add(user);
             }
-            for (AnnotationTableDTO singleAnnotation: dataAnnotationTable){
+            for (AnnotationTableDTO singleAnnotation : dataAnnotationTable) {
                 ProjectDTO project = PrimaryFillingMapper.INSTANCE.mapToProjectDTO(
                         singleAnnotation,
-                        getGrade(singleAnnotation,dataSummaryTable)
-                        );
+                        getGrade(singleAnnotation, dataSummaryTable)
+                );
                 project.setId(++projectCnt);
 
 
-                project.setUsersId(getUsersId(project,users,dataSummaryTable));
+                project.setUsersId(getUsersId(project, users, dataSummaryTable));
                 projects.add(project);
             }
 
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
-        catch (FileNotFoundException e){
-
-        }
-//        System.out.println(users.size());
-//        System.out.println(projects.size());
     }
 
 
@@ -71,17 +67,18 @@ public class primaryFillingExecutor {
     }
 
     //Нахождение grade из summaryTable для AnnotationTable
-    private static Integer getGrade(AnnotationTableDTO singleAnnotation,List<SummaryTableDTO> dataSummaryTable){
-        Optional<SummaryTableDTO> singleSummary = dataSummaryTable.stream().filter(x->singleAnnotation.getName().equals(x.getTeam())).findFirst();
+    private static Integer getGrade(AnnotationTableDTO singleAnnotation, List<SummaryTableDTO> dataSummaryTable) {
+        Optional<SummaryTableDTO> singleSummary = dataSummaryTable.stream().filter(x -> singleAnnotation.getName().equals(x.getTeam())).findFirst();
         return singleSummary.map(SummaryTableDTO::getGrade).orElse(null);
     }
+
     //Заполнение поля usersId для project
     private static List<Integer> getUsersId(ProjectDTO project, List<UserDTO> users, List<SummaryTableDTO> dataSummaryTable) {
-        List<String> userNames = dataSummaryTable.stream().filter(x->x.getTeam().equals(project.getTitle()))
-                .map(x->String.format("%s %s %s",
+        List<String> userNames = dataSummaryTable.stream().filter(x -> x.getTeam().equals(project.getTitle()))
+                .map(x -> String.format("%s %s %s",
                         x.getSurName(),
                         x.getFirstName(),
                         x.getSecondName())).toList();
-        return users.stream().filter(x->userNames.contains(x.getFullName())).map(UserDTO::getId).toList();
+        return users.stream().filter(x -> userNames.contains(x.getFullName())).map(UserDTO::getId).toList();
     }
 }
