@@ -18,7 +18,7 @@ public interface PrimaryFillingMapper {
     PrimaryFillingMapper INSTANCE = Mappers.getMapper(PrimaryFillingMapper.class);
 
 
-    @Mapping(target = "trackId", constant = "1") //Бакалавриат 2022-2023
+    @Mapping(target = "trackId", constant = "1") //Бакалавриат
     @Mapping(target = "title", source = "annotation.name")
     @Mapping(target = "description", source = "annotation.description")
     @Mapping(target = "repo", source = "annotation.repository")
@@ -62,6 +62,6 @@ public interface PrimaryFillingMapper {
 //        { "id": 2, "name": "Админ"},
 //        { "id": 3, "name": "Староста"},
 //        { "id": 4, "name": "СуперАдмин"}
-        return comment.contains("Староста") ? 1 : 3;
+        return comment.contains("Староста") ? 3 : 1;
     }
 }
