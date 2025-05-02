@@ -20,7 +20,7 @@ public interface PrimaryFillingMapper {
     @Mapping(target ="description",source ="annotation.description")
     @Mapping(target ="repo",source = "annotation.repository")
     @Mapping(target ="tagsId",source="annotation.tag",qualifiedByName="setTags")
-    @Mapping(target ="date",constant = "2023-2024")
+    //@Mapping(target ="date",constant = "2023-2024")
     ProjectDTO mapToProjectDTO(AnnotationTableDTO annotation,Integer grade); //Grade из другой таблицы
 
     //@Mapping(target ="id",constant = "1")
