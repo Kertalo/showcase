@@ -16,4 +16,8 @@ public interface TagService {
     void deleteTag(int tagId);
 
     Iterable<Tag> save(List<Tag> tags);
+
+    boolean existsByName(String tagName);
+
+    Tag getTagByName(String tagName);
 }

@@ -26,4 +26,10 @@ public interface UserService {
     User getUserByLogin(String email);
 
     User getUserByEmail(String email);
+
+    //TODO проверка уникальности пользователя (сейчас по ФИО и курсу)
+    boolean exitsByFullNameAndCourse(UserDTO userDTO);
+
+    //TODO проверка уникальности пользователя (сейчас по ФИО и курсу)
+    User getUserByFullNameAndCourse(String fullName, String course);
 }

@@ -20,4 +20,6 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
             "AND (:dateName IS NULL OR p.date.name = :dateName)" +
             "AND (:tagNames IS NULL OR EXISTS (SELECT t FROM p.tags t WHERE t.name IN :tagNames))")
     List<Project> findByTrackAndTags(@Param("trackName") String trackName,@Param("dateName") String dateName, @Param("tagNames") List<String> tagNames);
+
+    boolean existsProjectByTitle(String title);
 }

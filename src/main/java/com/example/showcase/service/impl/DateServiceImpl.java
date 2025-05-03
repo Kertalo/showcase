@@ -50,4 +50,10 @@ public class DateServiceImpl implements DateService {
         return dateRepository.saveAll(dates);
     }
 
+    @Override
+    public boolean existsByName(String dateName){return dateRepository.existsByName(dateName);}
+
+    @Override
+    public Date getDateByName(String dateName){return dateRepository.getDateByName(dateName);}
+
 }

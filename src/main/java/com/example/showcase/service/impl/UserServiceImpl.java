@@ -127,7 +127,7 @@ public class UserServiceImpl implements UserService {
             user.setRole(role);
             user.setFullName(userDTO.getFullName());
             user.setLogin(userDTO.getLogin());
-            user.setId(userDTO.getId());
+            user.setId(userDTO.getId()); //TODO test it (if userDTO.id == 0)
             user.setEmail(userDTO.getEmail());
             user.setGroup(userDTO.getGroup());
             user.setCourse(userDTO.getCourse());
@@ -159,6 +159,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public boolean exitsByFullNameAndCourse(UserDTO userDTO){
+        return userRepository.existsUserByFullNameAndCourse(userDTO.getFullName(),userDTO.getCourse());
+    }
+
+    @Override
+    public User getUserByFullNameAndCourse(String fullName, String course){
+        return userRepository.getUserByFullNameAndCourse(fullName,course);
     }
 
 }

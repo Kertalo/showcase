@@ -33,4 +33,7 @@ public interface ProjectService {
 
     @Transactional(readOnly = true)
     List<Project> getProjectsByTrackAndTags(String trackName, String dateName, List<String> tagNames);
+
+    //TODO проверка уникальности пользователя (сейчас по названию проекта)
+    boolean existsByTitle(String projectTitle);
 }

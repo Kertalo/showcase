@@ -17,4 +17,8 @@ public interface DateService {
     void deleteDate(int dateId);
 
     Iterable<Date> save(List<Date> dates);
+
+    boolean existsByName(String dateName);
+
+    Date getDateByName(String dateName);
 }

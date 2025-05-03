@@ -1,8 +1,15 @@
 package com.example.showcase.primary_filling;
 
+import com.opencsv.bean.CsvBindByName;
 import lombok.Data;
 
-//На данный момент не используется
+
 @Data
 public class ScoreTableDTO {
+
+    @CsvBindByName(column = "Название команды")
+    private String name;
+
+    @CsvBindByName(column = "Итого")
+    private Integer grade;
 }

@@ -50,4 +50,11 @@ public class TrackServiceImpl implements TrackService {
     public Iterable<Track> save(List<Track> tracks) {
         return trackRepository.saveAll(tracks);
     }
+
+    @Override
+    public boolean existsByName(String trackName){return trackRepository.existsByName(trackName);}
+
+    @Override
+    public Track getTrackByName(String trackName){return trackRepository.getTrackByName(trackName);}
+
 }

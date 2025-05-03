@@ -50,4 +50,10 @@ public class TagServiceImpl implements TagService {
     public Iterable<Tag> save(List<Tag> tags) {
         return tagRepository.saveAll(tags);
     }
+
+    @Override
+    public boolean existsByName(String tagName) {return tagRepository.existsByName(tagName);}
+
+    @Override
+    public Tag getTagByName(String tagName){return tagRepository.getTagByName(tagName);}
 }

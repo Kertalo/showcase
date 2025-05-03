@@ -293,4 +293,10 @@ public class ProjectServiceImpl implements ProjectService {
         return projectRepository.findByTrackAndTags(trackName, dateName, tagNames);
     }
 
+    //TODO проверка уникальности пользователя (сейчас по ФИО и курсу)
+    @Override
+    public boolean existsByTitle(String projectTitle){
+        return projectRepository.existsProjectByTitle(projectTitle);
+    }
+
 }

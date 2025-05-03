@@ -2,14 +2,41 @@ package com.example.showcase.primary_filling;
 
 import com.example.showcase.dto.ProjectDTO;
 import com.example.showcase.dto.UserDTO;
+import com.example.showcase.entity.Date;
+import com.example.showcase.entity.Tag;
+import com.example.showcase.entity.Track;
+import com.example.showcase.service.*;
 import com.opencsv.bean.CsvToBeanBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
+@Component
 public class PrimaryFillingLoader {
+    @Autowired
+    private PrimaryFillingMapper mapper;
+
+    @Autowired
+    private TrackService trackService;
+
+    @Autowired
+    private TagService tagService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private ProjectService projectService;
+
+    @Autowired
+    private DateService dateService;
 
     //Общие списки
     private static final String summaryTable = "src/main/resources/primary_filling/Списки команд '23-'24 - Общие списки.csv";
@@ -20,34 +47,73 @@ public class PrimaryFillingLoader {
     //Таблица с баллами
     private static final String scoreTable = "src/main/resources/primary_filling/Списки команд '23-'24 - Баллы.csv";
 
-    public static void scrapTables(List<UserDTO> users, List<ProjectDTO> projects) {
+    private static final String trackName = "Бакалавриат";
 
-        int userCnt = 0;
-        int projectCnt = 0;
-        try {
-            List<SummaryTableDTO> dataSummaryTable = scrapSummaryTable();
-            List<AnnotationTableDTO> dataAnnotationTable = scrapAnnotationTable();
-
-            for (SummaryTableDTO singleSummary : dataSummaryTable) {
-                UserDTO user = PrimaryFillingMapper.INSTANCE.mapToUserDTO(singleSummary);
-                user.setId(++userCnt);
-                users.add(user);
-            }
-            for (AnnotationTableDTO singleAnnotation : dataAnnotationTable) {
-                ProjectDTO project = PrimaryFillingMapper.INSTANCE.mapToProjectDTO(
-                        singleAnnotation,
-                        getGrade(singleAnnotation, dataSummaryTable)
-                );
-                project.setId(++projectCnt);
+    private static final String dateName = "2023-2024";
 
 
-                project.setUsersId(getUsersId(project, users, dataSummaryTable));
-                projects.add(project);
-            }
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+    @Transactional
+    public void load(){
+        //добавление треков
+        if(!trackService.existsByName(trackName)){
+            Track track = new Track();
+            track.setName(trackName);
+            trackService.createTrack(track);
         }
+        System.out.println("Tracks Saved!");
+
+        //добавление дат
+        if(!dateService.existsByName(dateName)){
+            Date date = new Date();
+            date.setName(dateName);
+            dateService.createDate(date);
+        }
+        System.out.println("Dates Saved!");
+
+        //добавление тегов
+        List<String> tagNames;
+        try {
+            tagNames = new ArrayList<>(scrapAnnotationTable().stream().map(x -> PrimaryFillingMapper.getTagsFromStr(x.getTag())).flatMap(Arrays::stream).collect(Collectors.toSet()));
+        }
+        catch (FileNotFoundException e){
+            throw new RuntimeException(e);
+        }
+        for (String tagName: tagNames){
+            if(!tagService.existsByName(tagName)){
+                Tag tag = new Tag();
+                tag.setName(tagName);
+                tagService.createTag(tag);
+            }
+        }
+        System.out.println("Tags Saved!");
+
+        //добавление юзеров
+        List<UserDTO> userDTOs;
+        try {
+            userDTOs = new ArrayList<>(
+                   mapper.mapToUserDTOList(scrapSummaryTable())
+                            .stream().filter(x->!userService.exitsByFullNameAndCourse(x)).toList());
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        if(!userDTOs.isEmpty()) userService.saveUsersFromDTO(userDTOs);
+        System.out.println("Users Saved!");
+
+        //добавление проектов
+        List<ProjectDTO> projectDTOs = new ArrayList<>();
+        try{
+            List<AnnotationTableDTO> annotationList = scrapAnnotationTable();
+            for (AnnotationTableDTO annotation: annotationList){
+                if (isProjectValid(annotation)) projectDTOs.add(mapper.mapToProjectDTO(annotation, joinScoreByAnnotationName(annotation), trackName, dateName));
+            }
+            projectDTOs.stream().filter(x->!projectService.existsByTitle(x.getTitle())).toList();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        if(!projectDTOs.isEmpty()) projectService.saveProjectsFromDTO(projectDTOs);
+        System.out.println("Projects Saved!");
+        System.out.println("Primary Filling completed");
+
     }
 
     private static List<SummaryTableDTO> scrapSummaryTable() throws FileNotFoundException {
@@ -64,19 +130,26 @@ public class PrimaryFillingLoader {
                 .parse();
     }
 
-    //Нахождение grade из summaryTable для AnnotationTable
-    private static Integer getGrade(AnnotationTableDTO singleAnnotation, List<SummaryTableDTO> dataSummaryTable) {
-        Optional<SummaryTableDTO> singleSummary = dataSummaryTable.stream().filter(x -> singleAnnotation.getName().equals(x.getTeam())).findFirst();
-        return singleSummary.map(SummaryTableDTO::getGrade).orElse(null);
+    private static List<ScoreTableDTO> scrapScoreTable() throws FileNotFoundException {
+        return new CsvToBeanBuilder<ScoreTableDTO>(new FileReader(scoreTable))
+                .withType(ScoreTableDTO.class)
+                .build()
+                .parse();
     }
 
-    //Заполнение поля usersId для project
-    private static List<Integer> getUsersId(ProjectDTO project, List<UserDTO> users, List<SummaryTableDTO> dataSummaryTable) {
-        List<String> userNames = dataSummaryTable.stream().filter(x -> x.getTeam().equals(project.getTitle()))
-                .map(x -> String.format("%s %s %s",
-                        x.getSurName(),
-                        x.getFirstName(),
-                        x.getSecondName())).toList();
-        return users.stream().filter(x -> userNames.contains(x.getFullName())).map(UserDTO::getId).toList();
+    //Получение записей таблицы "Общие списки", связанных с данной записью "Аннотации"
+    private static List<SummaryTableDTO> joinSummariesByAnnotationName(AnnotationTableDTO annotation) throws FileNotFoundException {
+        return scrapSummaryTable().stream().filter(x->x.getTeam().equals(annotation.getName())).toList();
     }
+
+    //Проверка того, что запись в таблице "Аннотации" актуальна (есть участники в таблице "Общие списки")
+    private static boolean isProjectValid(AnnotationTableDTO annotation) throws FileNotFoundException {
+        return !scrapSummaryTable().stream().filter(x->x.getTeam().equals(annotation.getName())).toList().isEmpty();
+    }
+
+    //Получение записи таблицы "Баллы", связанных с данной записью "Аннотации"
+    private static ScoreTableDTO joinScoreByAnnotationName(AnnotationTableDTO annotation) throws FileNotFoundException {
+        return scrapScoreTable().stream().filter(x->x.getName().equals(annotation.getName())).toList().getFirst();
+    }
+
 }

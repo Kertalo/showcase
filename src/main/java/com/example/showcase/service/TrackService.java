@@ -16,4 +16,8 @@ public interface TrackService {
     void deleteTrack(int trackId);
 
     Iterable<Track> save(List<Track> tracks);
+
+    boolean existsByName(String trackName);
+
+    Track getTrackByName(String trackName);
 }
