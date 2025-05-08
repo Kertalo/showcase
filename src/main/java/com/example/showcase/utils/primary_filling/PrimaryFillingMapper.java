@@ -1,4 +1,4 @@
-package com.example.showcase.primary_filling;
+package com.example.showcase.utils.primary_filling;
 
 import com.example.showcase.dto.ProjectDTO;
 import com.example.showcase.dto.UserDTO;

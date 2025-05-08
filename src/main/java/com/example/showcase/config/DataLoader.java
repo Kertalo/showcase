@@ -6,7 +6,7 @@ import com.example.showcase.entity.Date;
 import com.example.showcase.entity.Role;
 import com.example.showcase.entity.Tag;
 import com.example.showcase.entity.Track;
-import com.example.showcase.primary_filling.PrimaryFillingLoader;
+import com.example.showcase.utils.primary_filling.PrimaryFillingLoader;
 import com.example.showcase.service.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -112,12 +112,16 @@ public class DataLoader {
         };
     }
 
-    //Загрузка данных из csv-таблиц primary_filling (без файлов)
+    //Загрузка данных из csv-таблиц primary_filling (без файлов) "Бакалавриат 2023-2024"
     @Bean
     @Order(2)
     CommandLineRunner primaryFilling() {
         return _ -> {
-            primaryFillingLoader.load();
+            primaryFillingLoader.load("2023-2024","Бакалавриат",
+                    "src/main/resources/primary_filling/bach_23-24/Списки команд '23-'24 - Общие списки.csv",
+                    "src/main/resources/primary_filling/bach_23-24/Списки команд '23-'24 - Аннотации.csv",
+                    "src/main/resources/primary_filling/bach_23-24/Списки команд '23-'24 - Баллы.csv"
+            );
         };
     }
 }

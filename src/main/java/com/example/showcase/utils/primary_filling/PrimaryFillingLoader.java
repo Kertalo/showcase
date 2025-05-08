@@ -1,4 +1,4 @@
-package com.example.showcase.primary_filling;
+package com.example.showcase.utils.primary_filling;
 
 import com.example.showcase.dto.ProjectDTO;
 import com.example.showcase.dto.UserDTO;
@@ -7,6 +7,9 @@ import com.example.showcase.entity.Tag;
 import com.example.showcase.entity.Track;
 import com.example.showcase.service.*;
 import com.opencsv.bean.CsvToBeanBuilder;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,22 +41,45 @@ public class PrimaryFillingLoader {
     @Autowired
     private DateService dateService;
 
+    @Getter
+    @Setter
+    private String dateName;
+
+    @Getter
+    @Setter
+    private String trackName;
+
     //Общие списки
-    private static final String summaryTable = "src/main/resources/primary_filling/Списки команд '23-'24 - Общие списки.csv";
+    @Getter
+    @Setter
+    private String summaryTable;
 
     //Таблица с аннотациями
-    private static final String annotationTable = "src/main/resources/primary_filling/Списки команд '23-'24 - Аннотации.csv";
+    @Getter
+    @Setter
+    private String annotationTable;
 
     //Таблица с баллами
-    private static final String scoreTable = "src/main/resources/primary_filling/Списки команд '23-'24 - Баллы.csv";
+    @Getter
+    @Setter
+    private String scoreTable;
 
-    private static final String trackName = "Бакалавриат";
-
-    private static final String dateName = "2023-2024";
+    public void load(@NonNull String dateName,
+                     @NonNull String trackName,
+                     @NonNull String summaryTable,
+                     @NonNull String annotationTable,
+                     @NonNull String scoreTable){
+        this.setDateName(dateName);
+        this.setTrackName(trackName);
+        this.setSummaryTable(summaryTable);
+        this.setAnnotationTable(annotationTable);
+        this.setScoreTable(scoreTable);
+        this.fillDB();
+    }
 
 
     @Transactional
-    public void load(){
+    protected void fillDB(){
         //добавление треков
         if(!trackService.existsByName(trackName)){
             Track track = new Track();
@@ -116,21 +142,21 @@ public class PrimaryFillingLoader {
 
     }
 
-    private static List<SummaryTableDTO> scrapSummaryTable() throws FileNotFoundException {
+    private List<SummaryTableDTO> scrapSummaryTable() throws FileNotFoundException {
         return new CsvToBeanBuilder<SummaryTableDTO>(new FileReader(summaryTable))
                 .withType(SummaryTableDTO.class)
                 .build()
                 .parse();
     }
 
-    private static List<AnnotationTableDTO> scrapAnnotationTable() throws FileNotFoundException {
+    private List<AnnotationTableDTO> scrapAnnotationTable() throws FileNotFoundException {
         return new CsvToBeanBuilder<AnnotationTableDTO>(new FileReader(annotationTable))
                 .withType(AnnotationTableDTO.class)
                 .build()
                 .parse();
     }
 
-    private static List<ScoreTableDTO> scrapScoreTable() throws FileNotFoundException {
+    private List<ScoreTableDTO> scrapScoreTable() throws FileNotFoundException {
         return new CsvToBeanBuilder<ScoreTableDTO>(new FileReader(scoreTable))
                 .withType(ScoreTableDTO.class)
                 .build()
@@ -138,17 +164,17 @@ public class PrimaryFillingLoader {
     }
 
     //Получение записей таблицы "Общие списки", связанных с данной записью "Аннотации"
-    private static List<SummaryTableDTO> joinSummariesByAnnotationName(AnnotationTableDTO annotation) throws FileNotFoundException {
+    private List<SummaryTableDTO> joinSummariesByAnnotationName(AnnotationTableDTO annotation) throws FileNotFoundException {
         return scrapSummaryTable().stream().filter(x->x.getTeam().equals(annotation.getName())).toList();
     }
 
     //Проверка того, что запись в таблице "Аннотации" актуальна (есть участники в таблице "Общие списки")
-    private static boolean isProjectValid(AnnotationTableDTO annotation) throws FileNotFoundException {
+    private boolean isProjectValid(AnnotationTableDTO annotation) throws FileNotFoundException {
         return !scrapSummaryTable().stream().filter(x->x.getTeam().equals(annotation.getName())).toList().isEmpty();
     }
 
     //Получение записи таблицы "Баллы", связанных с данной записью "Аннотации"
-    private static ScoreTableDTO joinScoreByAnnotationName(AnnotationTableDTO annotation) throws FileNotFoundException {
+    private ScoreTableDTO joinScoreByAnnotationName(AnnotationTableDTO annotation) throws FileNotFoundException {
         return scrapScoreTable().stream().filter(x->x.getName().equals(annotation.getName())).toList().getFirst();
     }
 
