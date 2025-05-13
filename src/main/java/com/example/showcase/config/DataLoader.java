@@ -115,12 +115,26 @@ public class DataLoader {
     //Загрузка данных из csv-таблиц primary_filling (без файлов) "Бакалавриат 2023-2024"
     @Bean
     @Order(2)
-    CommandLineRunner primaryFilling() {
+    CommandLineRunner primaryFilling2023() {
         return _ -> {
             primaryFillingLoader.load("2023-2024","Бакалавриат",
                     "src/main/resources/primary_filling/bach_23-24/Списки команд '23-'24 - Общие списки.csv",
                     "src/main/resources/primary_filling/bach_23-24/Списки команд '23-'24 - Аннотации.csv",
                     "src/main/resources/primary_filling/bach_23-24/Списки команд '23-'24 - Баллы.csv"
+            );
+        };
+    }
+
+    //Загрузка данных из csv-таблиц primary_filling (без файлов) "Бакалавриат 2024-2025"
+    @Bean
+    @Order(3)
+    CommandLineRunner primaryFilling2024() {
+        return _ -> {
+            //TODO Болдырев Родион Андреевич (2-й курс) значится в двух командах сразу
+            primaryFillingLoader.load("2024-2025","Бакалавриат",
+                    "src/main/resources/primary_filling/bach_24-25/Списки команд '24-'25 - Общие списки.csv",
+                    "src/main/resources/primary_filling/bach_24-25/Списки команд '24-'25 - Аннотации.csv",
+                    "src/main/resources/primary_filling/bach_24-25/Списки команд '24-'25 - Баллы.csv"
             );
         };
     }

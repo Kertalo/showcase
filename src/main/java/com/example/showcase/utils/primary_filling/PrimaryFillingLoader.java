@@ -130,13 +130,17 @@ public class PrimaryFillingLoader {
         try{
             List<AnnotationTableDTO> annotationList = scrapAnnotationTable();
             for (AnnotationTableDTO annotation: annotationList){
-                if (isProjectValid(annotation)) projectDTOs.add(mapper.mapToProjectDTO(annotation, joinScoreByAnnotationName(annotation), trackName, dateName));
+                if (isProjectValid(annotation)) {
+                    projectDTOs.add(mapper.mapToProjectDTO(annotation, joinScoreByAnnotationName(annotation), trackName, dateName));
+                }
             }
-            projectDTOs.stream().filter(x->!projectService.existsByTitle(x.getTitle())).toList();
+            projectDTOs = projectDTOs.stream().filter(x->!projectService.existsByTitle(x.getTitle())).toList();
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
-        if(!projectDTOs.isEmpty()) projectService.saveProjectsFromDTO(projectDTOs);
+        if(!projectDTOs.isEmpty()) {
+            projectService.saveProjectsFromDTO(projectDTOs);
+        }
         System.out.println("Projects Saved!");
         System.out.println("Primary Filling completed");
 
