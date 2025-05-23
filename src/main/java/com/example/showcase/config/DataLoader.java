@@ -79,15 +79,15 @@ public class DataLoader {
                 System.out.println("Unable to save Roles: " + e.getMessage());
             }
 
-            TypeReference<List<UserDTO>> userTypeReference = new TypeReference<List<UserDTO>>() {};
-            InputStream userInputStream = TypeReference.class.getResourceAsStream("/json/users.json");
-            try {
-                List<UserDTO> users = mapper.readValue(userInputStream, userTypeReference);
-                userService.saveUsersFromDTO(users);
-                System.out.println("Users Saved!");
-            } catch (IOException e) {
-                System.out.println("Unable to save Users: " + e.getMessage());
-            }
+//            TypeReference<List<UserDTO>> userTypeReference = new TypeReference<List<UserDTO>>() {};
+//            InputStream userInputStream = TypeReference.class.getResourceAsStream("/json/users.json");
+//            try {
+//                List<UserDTO> users = mapper.readValue(userInputStream, userTypeReference);
+//                userService.saveUsersFromDTO(users);
+//                System.out.println("Users Saved!");
+//            } catch (IOException e) {
+//                System.out.println("Unable to save Users: " + e.getMessage());
+//            }
 
             TypeReference<List<Date>> dateTypeReference = new TypeReference<List<Date>>() {};
             InputStream dateInputStream = TypeReference.class.getResourceAsStream("/json/dates.json");
@@ -99,16 +99,16 @@ public class DataLoader {
                 System.out.println("Unable to save Dates: " + e.getMessage());
             }
 
-            TypeReference<List<ProjectDTO>> projectTypeReference = new TypeReference<List<ProjectDTO>>() {};
-            InputStream projectInputStream = TypeReference.class.getResourceAsStream("/json/projects.json");
-            try {
-                List<ProjectDTO> projects = mapper.readValue(projectInputStream, projectTypeReference);
-                projectService.saveProjectsFromDTO(projects);
-                System.out.println("Projects Saved!");
-            } catch (IOException e) {
-                System.out.println("Unable to save Projects: " + e.getMessage());
-            }
-            System.out.println("Load from jsoncompleted");
+//            TypeReference<List<ProjectDTO>> projectTypeReference = new TypeReference<List<ProjectDTO>>() {};
+//            InputStream projectInputStream = TypeReference.class.getResourceAsStream("/json/projects.json");
+//            try {
+//                List<ProjectDTO> projects = mapper.readValue(projectInputStream, projectTypeReference);
+//                projectService.saveProjectsFromDTO(projects);
+//                System.out.println("Projects Saved!");
+//            } catch (IOException e) {
+//                System.out.println("Unable to save Projects: " + e.getMessage());
+//            }
+            System.out.println("Load from json completed");
         };
     }
 
@@ -130,7 +130,7 @@ public class DataLoader {
     @Order(3)
     CommandLineRunner primaryFilling2024() {
         return _ -> {
-            //TODO Болдырев Родион Андреевич (2-й курс) значится в двух командах сразу
+            //Болдырев Родион Андреевич (2-й курс) значится в двух командах сразу
             primaryFillingLoader.load("2024-2025","Бакалавриат",
                     "src/main/resources/primary_filling/bach_24-25/Списки команд '24-'25 - Общие списки.csv",
                     "src/main/resources/primary_filling/bach_24-25/Списки команд '24-'25 - Аннотации.csv",
