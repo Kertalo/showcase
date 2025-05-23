@@ -46,9 +46,9 @@ public class ProjectServiceImpl implements ProjectService {
 
         List<Integer> userIds = projectDTO.getUsersId();
         List<User> users = userRepository.findAllById(userIds);
-        if (users.size() != userIds.size()) {
-            throw new ResourceNotFoundException("One or more users not found");
-        }
+//        if (users.size() != userIds.size()) {
+//            throw new ResourceNotFoundException("One or more users not found");
+//        }
 
         String imagePath = saveImage(projectDTO.getMainScreenshot(), projectDTO.getTitle());
         List<String> screenshotsPaths = saveImages(projectDTO.getScreenshots(), projectDTO.getTitle());
