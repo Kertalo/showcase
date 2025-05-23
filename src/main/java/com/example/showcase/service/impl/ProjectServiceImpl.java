@@ -43,9 +43,10 @@ public class ProjectServiceImpl implements ProjectService {
         if (tags.size() != tagIds.size()) {
             throw new ResourceNotFoundException("One or more tags not found");
         }
-
-        List<Integer> userIds = projectDTO.getUsersId();
-        List<User> users = userRepository.findAllById(userIds);
+        List<User> users = new ArrayList<>();
+        if (projectDTO.getUsersId() != null && !projectDTO.getUsersId().isEmpty()) {
+            users = userRepository.findAllById(projectDTO.getUsersId());
+        }
 //        if (users.size() != userIds.size()) {
 //            throw new ResourceNotFoundException("One or more users not found");
 //        }
