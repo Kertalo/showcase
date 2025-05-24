@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Login</title>
+</head>
+<body>
+<h2>Вход для администратора</h2>
+
+<form id="loginForm">
+    <div>
+        <label>Логин:</label>
+        <input type="text" id="username" required />
+    </div>
+    <div>
+        <label>Пароль:</label>
+        <input type="password" id="password" required />
+    </div>
+    <button type="submit">Войти</button>
+</form>
+
+<hr />
+
+<h3>Результат:</h3>
+<pre id="output"></pre>
+
+<script>
+    document.getElementById("loginForm").addEventListener("submit", async function(e) {
+        e.preventDefault();
+
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+
+        // Отправляем логин
+        const loginRes = await fetch('/admin/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password }),
+            credentials: 'include'
+        });
+
+        const output = document.getElementById("output");
+        if (loginRes.ok) {
+            output.textContent = '✅ Авторизация успешна\n';
+        } else {
+            output.textContent = '❌ Ошибка авторизации\n';
+        }
+
+        // Проверяем текущего пользователя
+        const userRes = await fetch('/user', {
+            credentials: 'include'
+        });
+
+        if (userRes.ok) {
+            const user = await userRes.json();
+            output.textContent += 'Вы вошли как: ' + user.name + '\n';
+        } else {
+            output.textContent += '❌ Вы не авторизованы\n';
+        }
+
+        // Проверяем доступ к /admin
+        const adminRes = await fetch('/admin/projects', {
+            credentials: 'include'
+        });
+
+        if (adminRes.ok) {
+            output.textContent += '✅ Доступ к /admin/projects разрешён\n';
+        } else {
+            output.textContent += '❌ Доступ к /admin/projects запрещён\n';
+        }
+    });
+</script>
+</body>
+</html>

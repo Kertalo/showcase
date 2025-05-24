@@ -1,5 +1,6 @@
 package com.example.showcase.controllers;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,5 +33,10 @@ public class AccUser {
         userInfo.put("accessToken", accessToken);
         userInfo.put("attributes", authentication.getPrincipal().getAttributes());
         return userInfo;
+    }
+
+    @GetMapping("/principal")
+    public Principal checkUser(Principal principal) {
+        return principal;
     }
 }
