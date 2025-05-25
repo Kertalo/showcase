@@ -45,7 +45,7 @@ public class SecurityConfig {
             .cors(withDefaults())
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/admin/**").hasRole("ADMIN")
-                    .requestMatchers(HttpMethod.GET, "/", "/projects/**", "/dates/**", "/tags/**", "/tracks/**", "/error", "/webjars/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/", "/projects/**","/users/**", "/dates/**", "/tags/**", "/tracks/**", "/error", "/webjars/**").permitAll()
                     .anyRequest().authenticated())
             .httpBasic(withDefaults())
             .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
