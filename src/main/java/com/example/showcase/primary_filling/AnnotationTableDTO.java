@@ -27,7 +27,7 @@ public class AnnotationTableDTO {
     @CsvBindByName(column = "Задачи проекта")
     private String tasks;
 
-    @CsvBindByName(column = "Репозиторий")
+    @CsvBindByName(column = "Репозиторий",required = false)
     private String repository;
 
     @CsvBindByName(column = "Презентация",required = false)

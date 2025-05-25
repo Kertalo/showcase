@@ -24,7 +24,7 @@ public class SummaryTableDTO {
     @CsvBindByName(column = "Команда")
     private String team;
 
-    @CsvBindByName(column = "Примечание")
+    @CsvBindByName(column = "Примечание",required = false)
     private String comment;
 
     @CsvBindByName(column = "Итого")
