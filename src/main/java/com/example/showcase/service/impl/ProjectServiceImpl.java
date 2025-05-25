@@ -294,4 +294,10 @@ public class ProjectServiceImpl implements ProjectService {
         return projectRepository.existsProjectByTitle(projectTitle);
     }
 
+
+    @Override
+    public List<Project> getProjectsByUserId(int userId) {
+        return projectRepository.findByUsersId(userId);
+    }
+
 }
