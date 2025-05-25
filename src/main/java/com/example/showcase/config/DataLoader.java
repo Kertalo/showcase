@@ -124,7 +124,7 @@ public class DataLoader {
         };
     }
 
-    //Загрузка данных из csv-таблиц primary_filling (без файлов) "Бакалавриат 2024-2025"
+//    //Загрузка данных из csv-таблиц primary_filling (без файлов) "Бакалавриат 2024-2025"
     @Bean
     @Order(3)
     CommandLineRunner primaryFilling2024() {

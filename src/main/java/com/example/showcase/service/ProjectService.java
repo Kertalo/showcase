@@ -40,4 +40,26 @@ public interface ProjectService {
     List<Project> getProjectsByUserId(int userId);
 
     List<Project> getProjectsByUserFullName(String fullName);
+
+    Project updateProjectTitle(int projectId, String title);
+
+    Project updateProjectDescription(int projectId, String description);
+
+    Project updateProjectGrade(int projectId, Integer grade);
+
+    Project updateProjectPresentation(int projectId, String presentation);
+
+    Project updateProjectRepo(int projectId, String repo);
+
+    Project updateProjectDate(int projectId, int dateId);
+
+    Project updateProjectTrack(int projectId, int trackId);
+
+    Project addUserToProject(int projectId, int userId);
+
+    Project removeUserFromProject(int projectId, int userId);
+
+    Project addTagToProject(int projectId, int tagId);
+
+    Project removeTagFromProject(int projectId, int tagId);
 }

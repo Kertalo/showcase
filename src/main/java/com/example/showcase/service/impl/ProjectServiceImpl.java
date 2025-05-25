@@ -4,7 +4,7 @@ import com.example.showcase.dto.ProjectDTO;
 import com.example.showcase.entity.*;
 import com.example.showcase.exception.ResourceNotFoundException;
 import com.example.showcase.repository.*;
-import com.example.showcase.service.ProjectService;
+import com.example.showcase.service.*;
 import com.example.showcase.storage_service.FileNameGenerator;
 import com.example.showcase.storage_service.Prefix;
 import com.example.showcase.storage_service.S3Service;
@@ -27,6 +27,10 @@ public class ProjectServiceImpl implements ProjectService {
     private UserRepository userRepository;
     private ProjectRepository projectRepository;
     private TrackRepository trackRepository;
+    private DateService dateService;
+    private TrackService trackService;
+    private UserService userService;
+    private TagService tagService;
 
     //Сервис для работы с S3-хранилищем
     private S3Service storageService;
@@ -303,6 +307,101 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public List<Project> getProjectsByUserFullName(String fullName) {
         return projectRepository.findByUserFullName(fullName);
+    }
+
+    @Override
+    public Project updateProjectTitle(int projectId, String title) {
+        Project project = getProjectById(projectId);
+        project.setTitle(title);
+        return projectRepository.save(project);
+    }
+
+    @Override
+    public Project updateProjectDescription(int projectId, String description) {
+        Project project = getProjectById(projectId);
+        project.setDescription(description);
+        return projectRepository.save(project);
+    }
+
+    @Override
+    public Project updateProjectGrade(int projectId, Integer grade) {
+        Project project = getProjectById(projectId);
+        project.setGrade(grade);
+        return projectRepository.save(project);
+    }
+
+    @Override
+    public Project updateProjectPresentation(int projectId, String presentation) {
+        Project project = getProjectById(projectId);
+        project.setPresentation(presentation);
+        return projectRepository.save(project);
+    }
+
+    @Override
+    public Project updateProjectRepo(int projectId, String repo) {
+        Project project = getProjectById(projectId);
+        project.setRepo(repo);
+        return projectRepository.save(project);
+    }
+
+    @Override
+    public Project updateProjectDate(int projectId, int dateId) {
+        Project project = getProjectById(projectId);
+        Date date = dateService.getDateById(dateId);
+        project.setDate(date);
+        return projectRepository.save(project);
+    }
+
+    @Override
+    public Project updateProjectTrack(int projectId, int trackId) {
+        Project project = getProjectById(projectId);
+        Track track = trackService.getTrackById(trackId);
+        project.setTrack(track);
+        return projectRepository.save(project);
+    }
+
+    @Override
+    public Project addUserToProject(int projectId, int userId) {
+        Project project = getProjectById(projectId);
+        User user = userService.getUserById(userId);
+        project.getUsers().add(user);
+        return projectRepository.save(project);
+    }
+
+    @Override
+    public Project removeUserFromProject(int projectId, int userId) {
+        Project project = getProjectById(projectId);
+        User user = userService.getUserById(userId);
+        project.getUsers().remove(user);
+        return projectRepository.save(project);
+    }
+
+    @Override
+    public Project addTagToProject(int projectId, int tagId) {
+        Project project = getProjectById(projectId);
+        Tag tag = tagService.getTagById(tagId);
+
+        if (project.getTags() == null) {
+            project.setTags(new ArrayList<>());
+        }
+
+        if (!project.getTags().contains(tag)) {
+            project.getTags().add(tag);
+        }
+
+        return projectRepository.save(project);
+    }
+
+    @Override
+    public Project removeTagFromProject(int projectId, int tagId) {
+        Project project = getProjectById(projectId);
+        Tag tag = tagService.getTagById(tagId);
+
+        if (project.getTags() != null) {
+            project.getTags().remove(tag);
+        }
+
+        return projectRepository.save(project);
     }
 
 }
