@@ -43,7 +43,7 @@ public class StorageController {
      *
      * @return
      */
-    //TODO test
+    @Deprecated
     @GetMapping("/projects/{projectId}/screenshots/count")
     public ResponseEntity<Integer> getScreenshotsCount(@PathVariable("projectId") int projectId) {
         List<String> screenshotsFileNameList = projectService.getProjectById(projectId).getScreenshots();

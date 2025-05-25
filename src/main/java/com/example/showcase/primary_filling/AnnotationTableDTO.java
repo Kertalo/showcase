@@ -1,4 +1,4 @@
-package com.example.showcase.utils.primary_filling;
+package com.example.showcase.primary_filling;
 
 import com.opencsv.bean.CsvBindByName;
 import lombok.Data;
@@ -29,4 +29,7 @@ public class AnnotationTableDTO {
 
     @CsvBindByName(column = "Репозиторий")
     private String repository;
+
+    @CsvBindByName(column = "Презентация",required = false)
+    private String presentation;
 }

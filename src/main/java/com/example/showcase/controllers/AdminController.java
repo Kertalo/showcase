@@ -5,15 +5,20 @@ import com.example.showcase.entity.Date;
 import com.example.showcase.entity.Project;
 import com.example.showcase.entity.Tag;
 import com.example.showcase.entity.Track;
+import com.example.showcase.primary_filling.PrimaryFillingLoader;
 import com.example.showcase.service.DateService;
 import com.example.showcase.service.ProjectService;
 import com.example.showcase.service.TagService;
 import com.example.showcase.service.TrackService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 
@@ -26,6 +31,7 @@ public class AdminController {
     private TagService tagService;
     private ProjectService projectService;
     private DateService dateService;
+    private PrimaryFillingLoader primaryFillingLoader;
 
     @PostMapping("tracks")
     public ResponseEntity<Track> createTrack(@RequestBody Track track) {
@@ -99,5 +105,36 @@ public class AdminController {
         return ResponseEntity.ok(dates);
     }
 
+    @PostMapping("primary_filling")
+    public ResponseEntity<String> processPrimaryFilling(
+            //TODO RequestParam vs RequestBody
+            @RequestParam("date") Date date,
+            @RequestParam("track") Track track,
+            @RequestParam("summary") MultipartFile summaryFile,
+            @RequestParam("annotation") MultipartFile annotationFile,
+            @RequestParam("score") MultipartFile scoreFile){
+        //Проверка наличия файлов
+        if (summaryFile.isEmpty() || annotationFile.isEmpty() || scoreFile.isEmpty()) {
+            return ResponseEntity.badRequest().body("Please upload all 3 CSV file");
+        }
 
+        // Проверка расширения файлов
+        if ((!summaryFile.getOriginalFilename().toLowerCase().endsWith(".csv")) || (!annotationFile.getOriginalFilename().toLowerCase().endsWith(".csv")) || (!scoreFile.getOriginalFilename().toLowerCase().endsWith(".csv")))  {
+            return ResponseEntity.badRequest().body("Only CSV files are allowed");
+        }
+
+        try (InputStream summaryStream = summaryFile.getInputStream();
+             InputStream annotationStream = annotationFile.getInputStream();
+             InputStream scoreStream =scoreFile.getInputStream();) {
+
+            //Первичная заливка
+            primaryFillingLoader.load(date.getName(),track.getName(),summaryStream,annotationStream,scoreStream);
+
+            return ResponseEntity.ok("CSV files processed successfully");
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Failed to proccess CSV file" + e.getMessage());
+        }
+
+    }
 }

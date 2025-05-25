@@ -1,12 +1,10 @@
 package com.example.showcase.config;
 
-import com.example.showcase.dto.ProjectDTO;
-import com.example.showcase.dto.UserDTO;
 import com.example.showcase.entity.Date;
 import com.example.showcase.entity.Role;
 import com.example.showcase.entity.Tag;
 import com.example.showcase.entity.Track;
-import com.example.showcase.utils.primary_filling.PrimaryFillingLoader;
+import com.example.showcase.primary_filling.PrimaryFillingLoader;
 import com.example.showcase.service.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -118,9 +117,9 @@ public class DataLoader {
     CommandLineRunner primaryFilling2023() {
         return _ -> {
             primaryFillingLoader.load("2023-2024","Бакалавриат",
-                    "src/main/resources/primary_filling/bach_23-24/Списки команд '23-'24 - Общие списки.csv",
-                    "src/main/resources/primary_filling/bach_23-24/Списки команд '23-'24 - Аннотации.csv",
-                    "src/main/resources/primary_filling/bach_23-24/Списки команд '23-'24 - Баллы.csv"
+                    new FileInputStream("src/main/resources/primary_filling/bach_23-24/Списки команд '23-'24 - Общие списки.csv"),
+                    new FileInputStream("src/main/resources/primary_filling/bach_23-24/Списки команд '23-'24 - Аннотации.csv"),
+                    new FileInputStream("src/main/resources/primary_filling/bach_23-24/Списки команд '23-'24 - Баллы.csv")
             );
         };
     }
@@ -132,9 +131,9 @@ public class DataLoader {
         return _ -> {
             //Болдырев Родион Андреевич (2-й курс) значится в двух командах сразу
             primaryFillingLoader.load("2024-2025","Бакалавриат",
-                    "src/main/resources/primary_filling/bach_24-25/Списки команд '24-'25 - Общие списки.csv",
-                    "src/main/resources/primary_filling/bach_24-25/Списки команд '24-'25 - Аннотации.csv",
-                    "src/main/resources/primary_filling/bach_24-25/Списки команд '24-'25 - Баллы.csv"
+                    new FileInputStream("src/main/resources/primary_filling/bach_24-25/Списки команд '24-'25 - Общие списки.csv"),
+                    new FileInputStream("src/main/resources/primary_filling/bach_24-25/Списки команд '24-'25 - Аннотации.csv"),
+                    new FileInputStream("src/main/resources/primary_filling/bach_24-25/Списки команд '24-'25 - Баллы.csv")
             );
         };
     }

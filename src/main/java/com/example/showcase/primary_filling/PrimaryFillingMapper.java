@@ -1,4 +1,4 @@
-package com.example.showcase.utils.primary_filling;
+package com.example.showcase.primary_filling;
 
 import com.example.showcase.dto.ProjectDTO;
 import com.example.showcase.dto.UserDTO;
@@ -43,6 +43,7 @@ public abstract class PrimaryFillingMapper {
     @Mapping(target = "tagsId", source = "annotation.tag", qualifiedByName = "setTags")
     @Mapping(target = "usersId",source = "annotation.team",qualifiedByName = "setTeam")
     @Mapping(target = "grade", source = "score.grade")
+    @Mapping(target = "presentation",source ="annotation.presentation")
     abstract ProjectDTO mapToProjectDTO(AnnotationTableDTO annotation, ScoreTableDTO score, String trackName,String dateName);
 
 
