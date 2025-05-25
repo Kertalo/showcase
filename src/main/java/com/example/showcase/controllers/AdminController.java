@@ -11,7 +11,6 @@ import com.example.showcase.service.ProjectService;
 import com.example.showcase.service.TagService;
 import com.example.showcase.service.TrackService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -136,5 +135,78 @@ public class AdminController {
             throw new RuntimeException("Failed to proccess CSV file" + e.getMessage());
         }
 
+    }
+
+
+    @PatchMapping("projects/{id}/title")
+    public ResponseEntity<Project> updateProjectTitle(
+            @PathVariable("id") int projectId,
+            @RequestParam String title) {
+        Project updatedProject = projectService.updateProjectTitle(projectId, title);
+        return ResponseEntity.ok(updatedProject);
+    }
+
+    @PatchMapping("projects/{id}/description")
+    public ResponseEntity<Project> updateProjectDescription(
+            @PathVariable("id") int projectId,
+            @RequestParam String description) {
+        Project updatedProject = projectService.updateProjectDescription(projectId, description);
+        return ResponseEntity.ok(updatedProject);
+    }
+
+    @PatchMapping("projects/{id}/grade")
+    public ResponseEntity<Project> updateProjectGrade(
+            @PathVariable("id") int projectId,
+            @RequestParam Integer grade) {
+        Project updatedProject = projectService.updateProjectGrade(projectId, grade);
+        return ResponseEntity.ok(updatedProject);
+    }
+
+    @PatchMapping("projects/{id}/presentation")
+    public ResponseEntity<Project> updateProjectPresentation(
+            @PathVariable("id") int projectId,
+            @RequestParam String presentation) {
+        Project updatedProject = projectService.updateProjectPresentation(projectId, presentation);
+        return ResponseEntity.ok(updatedProject);
+    }
+
+    @PatchMapping("projects/{id}/repo")
+    public ResponseEntity<Project> updateProjectRepo(
+            @PathVariable("id") int projectId,
+            @RequestParam String repo) {
+        Project updatedProject = projectService.updateProjectRepo(projectId, repo);
+        return ResponseEntity.ok(updatedProject);
+    }
+
+    @PatchMapping("projects/{id}/date")
+    public ResponseEntity<Project> updateProjectDate(
+            @PathVariable("id") int projectId,
+            @RequestParam int dateId) {
+        Project updatedProject = projectService.updateProjectDate(projectId, dateId);
+        return ResponseEntity.ok(updatedProject);
+    }
+
+    @PatchMapping("projects/{id}/track")
+    public ResponseEntity<Project> updateProjectTrack(
+            @PathVariable("id") int projectId,
+            @RequestParam int trackId) {
+        Project updatedProject = projectService.updateProjectTrack(projectId, trackId);
+        return ResponseEntity.ok(updatedProject);
+    }
+
+    @PostMapping("projects/{id}/users/add")
+    public ResponseEntity<Project> addUserToProject(
+            @PathVariable("id") int projectId,
+            @RequestParam int userId) {
+        Project updatedProject = projectService.addUserToProject(projectId, userId);
+        return ResponseEntity.ok(updatedProject);
+    }
+
+    @DeleteMapping("projects/{id}/users/remove")
+    public ResponseEntity<Project> removeUserFromProject(
+            @PathVariable("id") int projectId,
+            @RequestParam int userId) {
+        Project updatedProject = projectService.removeUserFromProject(projectId, userId);
+        return ResponseEntity.ok(updatedProject);
     }
 }
