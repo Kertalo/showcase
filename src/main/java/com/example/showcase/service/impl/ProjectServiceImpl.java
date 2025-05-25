@@ -5,14 +5,16 @@ import com.example.showcase.entity.*;
 import com.example.showcase.exception.ResourceNotFoundException;
 import com.example.showcase.repository.*;
 import com.example.showcase.service.ProjectService;
+import com.example.showcase.storage_service.FileNameGenerator;
+import com.example.showcase.storage_service.Prefix;
+import com.example.showcase.storage_service.S3Service;
+import io.minio.errors.MinioException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,8 +28,8 @@ public class ProjectServiceImpl implements ProjectService {
     private ProjectRepository projectRepository;
     private TrackRepository trackRepository;
 
-    private static final String FOLDER_PATH = "C:\\JAVA\\PROJECTS\\showcase\\project_images\\main_screenshots\\";
-    private static final String FOLDER_PATH_SCREENSHOTS = "C:\\JAVA\\PROJECTS\\showcase\\project_images\\screenshots\\";
+    //Сервис для работы с S3-хранилищем
+    private S3Service storageService;
 
     @Override
     public Project createProject(ProjectDTO projectDTO) {
@@ -36,7 +38,7 @@ public class ProjectServiceImpl implements ProjectService {
                 .orElseThrow(() -> new ResourceNotFoundException("Date not found"));
 
         Track track = trackRepository.findById(projectDTO.getTrackId())
-            .orElseThrow(() -> new ResourceNotFoundException("Track not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Track not found"));
 
         List<Integer> tagIds = projectDTO.getTagsId();
         List<Tag> tags = tagRepository.findAllById(tagIds);
@@ -75,63 +77,39 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     private String saveImage(MultipartFile image, String title) {
-        File directory = new File(FOLDER_PATH);
-        if (!directory.exists()) {
-            directory.mkdirs();
-        }
 
-        String filePath = FOLDER_PATH + title + ".png";
+        String fileName = FileNameGenerator.generateFileName(Prefix.PROJECT_MAIN_IMAGE, title);
+
         try {
-            image.transferTo(new File(filePath));
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to save image: " + e.getMessage());
+            storageService.uploadFile(fileName, image);
+        } catch (IOException | MinioException e) {
+            throw new RuntimeException("Error uploading image " + e.getMessage());
         }
 
-        return filePath;
+        return fileName;
     }
 
     private List<String> saveImages(MultipartFile[] images, String title) {
-        List<String> imagePaths = new ArrayList<>();
-        File directory = new File(FOLDER_PATH_SCREENSHOTS + title);
+        List<String> fileNameList = new ArrayList<>();
 
-        if (!directory.exists()) {
-            directory.mkdirs();
-        }
-
-        for (int i = 1; i < images.length + 1; i++) {
-            MultipartFile image = images[i-1];
-            String fileName = title + "_screenshot_"+ i + ".png";
-            String filePath = directory.getAbsolutePath() + File.separator + fileName;
-
+        for (MultipartFile image : images) {
+            //String fileName = title + "_screenshot_"+ i + ".png";
+            String fileName = FileNameGenerator.generateFileName(Prefix.PROJECT_OTHER_SCREENSHOTS, title);
+            fileNameList.add(fileName);
             try {
-                image.transferTo(new File(filePath));
-                imagePaths.add(filePath);
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to save image: " + e.getMessage());
+                storageService.uploadFile(fileName, image);
+            } catch (IOException | MinioException e) {
+                throw new RuntimeException("Error uploading image " + e.getMessage());
             }
         }
 
-        return imagePaths;
-    }
-
-    private void deleteFolder(File folder) {
-        File[] files = folder.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    deleteFolder(file);
-                } else {
-                    file.delete();
-                }
-            }
-        }
-        folder.delete();
+        return fileNameList;
     }
 
     @Override
     public Project getProjectById(int projectId) {
         Project project = projectRepository.findById(projectId)
-            .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
         return project;
     }
 
@@ -192,18 +170,29 @@ public class ProjectServiceImpl implements ProjectService {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
 
+        //удаление файла из projects.image
         if (project.getMainScreenshot() != null && !project.getMainScreenshot().isEmpty()) {
-            File file = new File(project.getMainScreenshot());
-            if (file.exists() && file.isFile()) {
-                if (!file.delete()) {
-                    throw new RuntimeException("Failed to delete main screenshot file");
+            String fileName = project.getMainScreenshot();
+            if (storageService.fileExists(fileName)) {
+                try {
+                    storageService.deleteFile(fileName);
+                } catch (MinioException e) {
+                    throw new RuntimeException("Failed to delete main screenshot" + e.getMessage());
                 }
             }
         }
 
-        File screenshotsFolder = new File(FOLDER_PATH_SCREENSHOTS + project.getTitle());
-        if (screenshotsFolder.exists()) {
-            deleteFolder(screenshotsFolder);
+        //удаление списка файлов из projects.screenshots
+        if (!project.getScreenshots().isEmpty()) {
+            for (String fileName : project.getScreenshots()) {
+                if (storageService.fileExists(fileName)) {
+                    try {
+                        storageService.deleteFile(fileName);
+                    } catch (MinioException e) {
+                        throw new RuntimeException("Failed to delete main screenshot" + e.getMessage());
+                    }
+                }
+            }
         }
 
         projectRepository.delete(project);
@@ -225,7 +214,7 @@ public class ProjectServiceImpl implements ProjectService {
                     .orElseThrow(() -> new ResourceNotFoundException("Track not found"));
             project.setTrack(track);
 
-           Date date = dateRepository.findById(projectDTO.getDateId())
+            Date date = dateRepository.findById(projectDTO.getDateId())
                     .orElseThrow(() -> new ResourceNotFoundException("Date not found"));
             project.setDate(date);
 
@@ -257,8 +246,13 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public byte[] downloadMainImageFromFileSystem(Integer projectId) throws IOException {
         Optional<Project> project = projectRepository.findById(projectId);
-        String filePath = project.get().getMainScreenshot();
-        byte[] images = Files.readAllBytes(new File(filePath).toPath());
+        String fileName = project.get().getMainScreenshot();
+        byte[] images = null;
+        try {
+            images = storageService.getFile(fileName);
+        } catch (MinioException e) {
+            throw new RuntimeException(e);
+        }
         return images;
     }
 
@@ -296,7 +290,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     //TODO проверка уникальности пользователя (сейчас по ФИО и курсу)
     @Override
-    public boolean existsByTitle(String projectTitle){
+    public boolean existsByTitle(String projectTitle) {
         return projectRepository.existsProjectByTitle(projectTitle);
     }
 

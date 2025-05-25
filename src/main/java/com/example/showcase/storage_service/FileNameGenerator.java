@@ -12,6 +12,6 @@ public class FileNameGenerator {
      * @return
      */
     public static String generateFileName(Prefix prefix,String title) {
-        return String.format("%s_%s_%s.png", prefix.getValue(), title, UUID.randomUUID());
+        return String.format("%s/%s/%s.png", prefix.getValue(), title, UUID.randomUUID());
     }
 }

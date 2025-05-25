@@ -37,20 +37,18 @@ public class S3Service {
                             .contentType(file.getContentType())
                             .build());
         } catch (MinioException | InvalidKeyException | NoSuchAlgorithmException e) {
-            throw new MinioException("Error uploading file to Minio: " + e.getMessage());
+            throw new MinioException("Error uploading file to S3 Storage: " + e.getMessage());
         }
     }
 
     /**
      * Получение файла с добавлением сгенерированного имени
+     * (С закрытием InputStream)
      */
-    public InputStream getFile(String fileName) throws MinioException {
-        try {
-            return storageClient.getObject(
-                    GetObjectArgs.builder()
-                            .bucket(bucketName)
-                            .object(fileName)
-                            .build());
+    public byte[] getFile(String fileName) throws MinioException {
+        try (InputStream inputStream = storageClient.getObject(
+                GetObjectArgs.builder().bucket(bucketName).object(fileName).build())) {
+            return inputStream.readAllBytes();
         } catch (Exception e) {
             throw new MinioException("File download failed: " + e.getMessage());
         }
@@ -80,7 +78,7 @@ public class S3Service {
     }
 
     /**
-     * Проверка существования файла (экспериментальная)
+     * Проверка существования файла
      */
     public boolean fileExists(String fileName) {
         try {
@@ -89,8 +87,13 @@ public class S3Service {
                             .bucket(bucketName)
                             .object(fileName)
                             .build());
+            System.out.println("Object exists");
             return true;
-        } catch (Exception e) {
+        } catch (MinioException e) {
+            System.out.println("Object doesn't exists");
+            return false;
+        } catch (InvalidKeyException | IOException | NoSuchAlgorithmException e){
+            System.out.println("Error checking file existence" + e.getMessage());
             return false;
         }
     }

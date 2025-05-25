@@ -1,8 +1,9 @@
 package com.example.showcase.storage_service;
 
 public enum Prefix {
-    USER("user_images"),
-    PROJECT("project_images");
+    USER("user/images"),
+    PROJECT_MAIN_IMAGE("project/main_image"),
+    PROJECT_OTHER_SCREENSHOTS("project/screenshots");
 
     private final String value;
 

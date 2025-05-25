@@ -2,18 +2,21 @@ package com.example.showcase.service.impl;
 
 import com.example.showcase.dto.UserDTO;
 import com.example.showcase.entity.Role;
-import com.example.showcase.exception.ResourceNotFoundException;
 import com.example.showcase.entity.User;
+import com.example.showcase.exception.ResourceNotFoundException;
 import com.example.showcase.repository.RoleRepository;
 import com.example.showcase.repository.UserRepository;
 import com.example.showcase.service.UserService;
+import com.example.showcase.storage_service.FileNameGenerator;
+import com.example.showcase.storage_service.Prefix;
+import com.example.showcase.storage_service.S3Service;
+import io.minio.errors.MinioException;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +27,9 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
 
-    private static final String FOLDER_PATH = "C:\\JAVA\\PROJECTS\\showcase\\user_images\\";
+    @Autowired
+    private S3Service storageService;
+
 
     @Override
     public User createUser(UserDTO userDTO) {
@@ -46,25 +51,21 @@ public class UserServiceImpl implements UserService {
     }
 
     private String saveImage(MultipartFile image, String name) {
-        File directory = new File(FOLDER_PATH);
-        if (!directory.exists()) {
-            directory.mkdirs();
-        }
+        String fileName = FileNameGenerator.generateFileName(Prefix.USER, name);
 
-        String filePath = FOLDER_PATH + name + ".png";
         try {
-            image.transferTo(new File(filePath));
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to save image: " + e.getMessage());
+            storageService.uploadFile(fileName, image);
+        } catch (IOException | MinioException e) {
+            throw new RuntimeException("Error uploading image " + e.getMessage());
         }
 
-        return filePath;
+        return fileName;
     }
 
     @Override
     public User getUserById(int userId) {
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         return user;
     }
 
@@ -76,9 +77,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateUser(int userId, UserDTO updateUserDTO) {
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         Role role = roleRepository.findById(updateUserDTO.getRoleId())
-                        .orElseThrow(() -> new ResourceNotFoundException("Role not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Role not found"));
         user.setFullName(updateUserDTO.getFullName());
         user.setLogin(updateUserDTO.getLogin());
         user.setCourse(updateUserDTO.getCourse());
@@ -97,12 +98,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(int userId) {
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        //удаление файла из users.image
         if (user.getImagePath() != null && !user.getImagePath().isEmpty()) {
-            File file = new File(user.getImagePath());
-            if (file.exists() && file.isFile()) {
-                if (!file.delete()) {
-                    throw new RuntimeException("Failed to delete file");
+            String fileName = user.getImagePath();
+            if (storageService.fileExists(fileName)) {
+                try {
+                    storageService.deleteFile(fileName);
+                } catch (MinioException e) {
+                    throw new RuntimeException("Failed to delete user image" + e.getMessage());
                 }
             }
         }
@@ -127,7 +132,7 @@ public class UserServiceImpl implements UserService {
             user.setRole(role);
             user.setFullName(userDTO.getFullName());
             user.setLogin(userDTO.getLogin());
-            user.setId(userDTO.getId()); //TODO test it (if userDTO.id == 0)
+            user.setId(userDTO.getId());
             user.setEmail(userDTO.getEmail());
             user.setGroup(userDTO.getGroup());
             user.setCourse(userDTO.getCourse());
@@ -142,12 +147,16 @@ public class UserServiceImpl implements UserService {
         return userRepository.saveAll(users);
     }
 
-
     @Override
     public byte[] downloadImageFromFileSystem(Integer userId) throws IOException {
         Optional<User> user = userRepository.findById(userId);
-        String filePath = user.get().getImagePath();
-        byte[] images = Files.readAllBytes(new File(filePath).toPath());
+        String fileName = user.get().getImagePath();
+        byte[] images = null;
+        try {
+            images = storageService.getFile(fileName);
+        } catch (MinioException e) {
+            throw new RuntimeException(e);
+        }
         return images;
     }
 
@@ -162,13 +171,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean exitsByFullNameAndCourse(UserDTO userDTO){
-        return userRepository.existsUserByFullNameAndCourse(userDTO.getFullName(),userDTO.getCourse());
+    public boolean exitsByFullNameAndCourse(UserDTO userDTO) {
+        return userRepository.existsUserByFullNameAndCourse(userDTO.getFullName(), userDTO.getCourse());
     }
 
     @Override
-    public User getUserByFullNameAndCourse(String fullName, String course){
-        return userRepository.getUserByFullNameAndCourse(fullName,course);
+    public User getUserByFullNameAndCourse(String fullName, String course) {
+        return userRepository.getUserByFullNameAndCourse(fullName, course);
     }
 
 }
