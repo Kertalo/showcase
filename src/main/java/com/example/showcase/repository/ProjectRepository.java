@@ -24,4 +24,7 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
     boolean existsProjectByTitle(String title);
 
     List<Project> findByUsersId(int userId);
+
+    @Query("SELECT p FROM Project p JOIN p.users u WHERE u.fullName = :fullName")
+    List<Project> findByUserFullName(@Param("fullName") String fullName);
 }

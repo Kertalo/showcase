@@ -72,9 +72,15 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @GetMapping("/{id}/projects")
-    public ResponseEntity<List<Project>> getProjectsByUserId(@PathVariable("id") int userId) {
-        List<Project> projects = projectService.getProjectsByUserId(userId);
+//    @GetMapping("/{id}/projects")
+//    public ResponseEntity<List<Project>> getProjectsByUserId(@PathVariable("id") int userId) {
+//        List<Project> projects = projectService.getProjectsByUserId(userId);
+//        return ResponseEntity.ok(projects);
+//    }
+
+    @GetMapping("/{fullName}/projects")
+    public ResponseEntity<List<Project>> getProjectsByUserFullName(@PathVariable("fullName") String fullName) {
+        List<Project> projects = projectService.getProjectsByUserFullName(fullName);
         return ResponseEntity.ok(projects);
     }
 }

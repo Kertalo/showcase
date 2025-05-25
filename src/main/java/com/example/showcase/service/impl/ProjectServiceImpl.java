@@ -300,4 +300,9 @@ public class ProjectServiceImpl implements ProjectService {
         return projectRepository.findByUsersId(userId);
     }
 
+    @Override
+    public List<Project> getProjectsByUserFullName(String fullName) {
+        return projectRepository.findByUserFullName(fullName);
+    }
+
 }

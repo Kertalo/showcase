@@ -38,4 +38,6 @@ public interface ProjectService {
     boolean existsByTitle(String projectTitle);
 
     List<Project> getProjectsByUserId(int userId);
+
+    List<Project> getProjectsByUserFullName(String fullName);
 }
