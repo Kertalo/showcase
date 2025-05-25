@@ -58,4 +58,8 @@ public interface ProjectService {
     Project addUserToProject(int projectId, int userId);
 
     Project removeUserFromProject(int projectId, int userId);
+
+    Project addTagToProject(int projectId, int tagId);
+
+    Project removeTagFromProject(int projectId, int tagId);
 }

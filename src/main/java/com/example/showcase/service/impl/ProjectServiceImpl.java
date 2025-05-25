@@ -4,10 +4,7 @@ import com.example.showcase.dto.ProjectDTO;
 import com.example.showcase.entity.*;
 import com.example.showcase.exception.ResourceNotFoundException;
 import com.example.showcase.repository.*;
-import com.example.showcase.service.DateService;
-import com.example.showcase.service.ProjectService;
-import com.example.showcase.service.TrackService;
-import com.example.showcase.service.UserService;
+import com.example.showcase.service.*;
 import com.example.showcase.storage_service.FileNameGenerator;
 import com.example.showcase.storage_service.Prefix;
 import com.example.showcase.storage_service.S3Service;
@@ -33,6 +30,7 @@ public class ProjectServiceImpl implements ProjectService {
     private DateService dateService;
     private TrackService trackService;
     private UserService userService;
+    private TagService tagService;
 
     //Сервис для работы с S3-хранилищем
     private S3Service storageService;
@@ -375,6 +373,34 @@ public class ProjectServiceImpl implements ProjectService {
         Project project = getProjectById(projectId);
         User user = userService.getUserById(userId);
         project.getUsers().remove(user);
+        return projectRepository.save(project);
+    }
+
+    @Override
+    public Project addTagToProject(int projectId, int tagId) {
+        Project project = getProjectById(projectId);
+        Tag tag = tagService.getTagById(tagId);
+
+        if (project.getTags() == null) {
+            project.setTags(new ArrayList<>());
+        }
+
+        if (!project.getTags().contains(tag)) {
+            project.getTags().add(tag);
+        }
+
+        return projectRepository.save(project);
+    }
+
+    @Override
+    public Project removeTagFromProject(int projectId, int tagId) {
+        Project project = getProjectById(projectId);
+        Tag tag = tagService.getTagById(tagId);
+
+        if (project.getTags() != null) {
+            project.getTags().remove(tag);
+        }
+
         return projectRepository.save(project);
     }
 

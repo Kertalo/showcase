@@ -209,4 +209,20 @@ public class AdminController {
         Project updatedProject = projectService.removeUserFromProject(projectId, userId);
         return ResponseEntity.ok(updatedProject);
     }
+
+    @PostMapping("projects/{id}/tags/add")
+    public ResponseEntity<Project> addTagToProject(
+            @PathVariable("id") int projectId,
+            @RequestParam int tagId) {
+        Project updatedProject = projectService.addTagToProject(projectId, tagId);
+        return ResponseEntity.ok(updatedProject);
+    }
+
+    @DeleteMapping("projects/{id}/tags/remove")
+    public ResponseEntity<Project> removeTagFromProject(
+            @PathVariable("id") int projectId,
+            @RequestParam int tagId) {
+        Project updatedProject = projectService.removeTagFromProject(projectId, tagId);
+        return ResponseEntity.ok(updatedProject);
+    }
 }
