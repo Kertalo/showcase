@@ -22,4 +22,9 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
     List<Project> findByTrackAndTags(@Param("trackName") String trackName,@Param("dateName") String dateName, @Param("tagNames") List<String> tagNames);
 
     boolean existsProjectByTitle(String title);
+
+    List<Project> findByUsersId(int userId);
+
+    @Query("SELECT p FROM Project p JOIN p.users u WHERE u.fullName = :fullName")
+    List<Project> findByUserFullName(@Param("fullName") String fullName);
 }

@@ -36,4 +36,8 @@ public interface ProjectService {
 
     //TODO проверка уникальности пользователя (сейчас по названию проекта)
     boolean existsByTitle(String projectTitle);
+
+    List<Project> getProjectsByUserId(int userId);
+
+    List<Project> getProjectsByUserFullName(String fullName);
 }

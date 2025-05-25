@@ -1,7 +1,9 @@
 package com.example.showcase.controllers;
 
 import com.example.showcase.dto.UserDTO;
+import com.example.showcase.entity.Project;
 import com.example.showcase.entity.User;
+import com.example.showcase.service.ProjectService;
 import com.example.showcase.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,7 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
     private UserService userService;
+    private ProjectService projectService;
 
     @PostMapping
     public ResponseEntity<User> createUser(@ModelAttribute  UserDTO user) {
@@ -67,5 +70,17 @@ public class UserController {
     public ResponseEntity<User> getUserByEmail(@PathVariable("email") String email) {
         User user = userService.getUserByEmail(email);
         return ResponseEntity.ok(user);
+    }
+
+//    @GetMapping("/{id}/projects")
+//    public ResponseEntity<List<Project>> getProjectsByUserId(@PathVariable("id") int userId) {
+//        List<Project> projects = projectService.getProjectsByUserId(userId);
+//        return ResponseEntity.ok(projects);
+//    }
+
+    @GetMapping("/{fullName}/projects")
+    public ResponseEntity<List<Project>> getProjectsByUserFullName(@PathVariable("fullName") String fullName) {
+        List<Project> projects = projectService.getProjectsByUserFullName(fullName);
+        return ResponseEntity.ok(projects);
     }
 }
