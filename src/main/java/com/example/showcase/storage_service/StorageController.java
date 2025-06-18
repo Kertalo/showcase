@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:5173", "https://sfedu-project-showcase.onrender.com"})
+@CrossOrigin(origins = {"http://localhost:5173", "https://showcase-pd.ru"})
 @RequestMapping("/api")
 @AllArgsConstructor
 public class StorageController {

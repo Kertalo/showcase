@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.List;
 
 @AllArgsConstructor
-@CrossOrigin(origins = {"http://localhost:5173", "https://sfedu-project-showcase.onrender.com"})
+@CrossOrigin(origins = {"http://localhost:5173", "https://showcase-pd.ru"})
 @RestController
 @RequestMapping("/users")
 public class UserController {
